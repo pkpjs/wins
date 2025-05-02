@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>보안 명령어 저장소</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #fafafa;
+      color: #333;
+      line-height: 1.6;
+    }
+    h1, h2 {
+      color: #2c3e50;
+    }
+    input, button {
+      padding: 8px;
+      margin-top: 8px;
+      margin-bottom: 16px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    .cmd {
+      background: #f4f4f4;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-left: 5px solid #3498db;
+    }
+  </style>
+</head>
+<body>
+  <h1>자주 사용하는 보안 명령어 저장소</h1>
+
+  <div id="commandList">
+    <div class="cmd"><strong>nmap</strong>: 네트워크 스캐닝</div>
+    <div class="cmd"><strong>netcat</strong>: 포트 리스닝</div>
+    <div class="cmd"><strong>openssl</strong>: SSL/TLS 연결 검사</div>
+  </div>
+
+  <h2>명령어 추가</h2>
+  <input type="text" id="newCommand" placeholder="예: curl -I http://example.com">
+  <button onclick="addCommand()">추가</button>
+
+  <script>
+    function addCommand() {
+      const input = document.getElementById("newCommand");
+      const value = input.value.trim();
+      if (!value) return;
+
+      const cmdDiv = document.createElement("div");
+      cmdDiv.className = "cmd";
+      cmdDiv.innerHTML = `<strong>${value.split(' ')[0]}</strong>: ${value}`;
+      document.getElementById("commandList").appendChild(cmdDiv);
+
+      input.value = "";
+    }
+  </script>
+</body>
+</html>
