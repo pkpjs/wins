@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>정렬 알고리즘 시각화 + 로그</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f0f0f0; }
+    input, select, button { padding: 8px; margin: 5px; font-size: 16px; }
+    .bar-container { display: flex; align-items: flex-end; height: 200px; margin-top: 20px; }
+    .bar {
+      width: 20px; margin: 0 2px; background-color: #4CAF50;
+      transition: height 0.4s, background-color 0.4s;
+    }
+    .highlight { background-color: orange !important; }
+    .array-log { margin-top: 20px; font-size: 16px; background: #fff; padding: 10px; border-radius: 6px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h2>정렬 알고리즘 시각화 툴 + 정렬 로그</h2>
+  <input id="arrayInput" placeholder="예: 5 3 8 4 2" />
+  <select id="algorithm">
+    <option value="bubble">버블 정렬</option>
+    <option value="selection">선택 정렬</option>
+    <option value="insertion">삽입 정렬</option>
+    <option value="shell">셸 정렬</option>
+    <option value="quick">퀵 정렬</option>
+    <option value="merge">병합 정렬</option>
+    <option value="heap">힙 정렬</option>
+  </select>
+  <button onclick="startSort()">시작</button>
+  <button onclick="nextStep()">다음 단계</button>
+  <button onclick="autoPlay()">전체 실행</button>
+  <button onclick="reset()">초기화</button>
+
+  <div class="bar-container" id="bars"></div>
+  <div class="array-log" id="arrayLog"></div>
+
+  <script>
+    let array = [], steps = [], stepIndex = 0, interval;
+
+    function startSort() {
+      const input = document.getElementById('arrayInput').value.trim();
+      array = input.split(' ').map(Number);
+      const algorithm = document.getElementById('algorithm').value;
+      steps = generateSteps(array.slice(), algorithm);
+      stepIndex = 0;
+      render(array);
+      renderLog(array);
+    }
+
+    function nextStep() {
+      if (stepIndex < steps.length) {
+        array = steps[stepIndex].slice();
+        render(array);
+        renderLog(array);
+        stepIndex++;
+      }
+    }
+
+    function autoPlay() {
+      clearInterval(interval);
+      interval = setInterval(() => {
+        if (stepIndex >= steps.length) clearInterval(interval);
+        else nextStep();
+      }, 500);
+    }
+
+    function reset() {
+      clearInterval(interval);
+      array = [];
+      steps = [];
+      stepIndex = 0;
+      document.getElementById('bars').innerHTML = '';
+      document.getElementById('arrayLog').textContent = '';
+    }
+
+    function render(arr) {
+      const container = document.getElementById('bars');
+      container.innerHTML = '';
+      const max = Math.max(...arr);
+      arr.forEach(val => {
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        bar.style.height = (val / max * 100 + 50) + 'px';
+        container.appendChild(bar);
+      });
+    }
+
+    function renderLog(arr) {
+      const log = document.getElementById('arrayLog');
+      log.textContent += `단계 ${stepIndex + 1}: ${arr.join(' ')}\n`;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function generateSteps(arr, algo) {
+      const result = [];
+      const push = () => result.push(arr.slice());
+      if (algo === 'bubble') {
+        for (let i = 0; i < arr.length; i++) {
+          for (let j = 0; j < arr.length - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+            push();
+          }
+        }
+      } else if (algo === 'selection') {
+        for (let i = 0; i < arr.length; i++) {
+          let min = i;
+          for (let j = i + 1; j < arr.length; j++) {
+            if (arr[j] < arr[min]) min = j;
+          }
+          [arr[i], arr[min]] = [arr[min], arr[i]];
+          push();
+        }
+      } else if (algo === 'insertion') {
+        for (let i = 1; i < arr.length; i++) {
+          let key = arr[i], j = i - 1;
+          while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j]; j--; push();
+          }
+          arr[j + 1] = key; push();
+        }
+      } else if (algo === 'shell') {
+        let gap = Math.floor(arr.length / 2);
+        while (gap > 0) {
+          for (let i = gap; i < arr.length; i++) {
+            let temp = arr[i], j = i;
+            while (j >= gap && arr[j - gap] > temp) {
+              arr[j] = arr[j - gap]; j -= gap; push();
+            }
+            arr[j] = temp; push();
+          }
+          gap = Math.floor(gap / 2);
+        }
+      } else if (algo === 'quick') {
+        const quickSort = (l, r) => {
+          if (l >= r) return;
+          let pivot = arr[r], i = l;
+          for (let j = l; j < r; j++) {
+            if (arr[j] < pivot) {
+              [arr[i], arr[j]] = [arr[j], arr[i]]; i++; push();
+            }
+          }
+          [arr[i], arr[r]] = [arr[r], arr[i]]; push();
+          quickSort(l, i - 1); quickSort(i + 1, r);
+        };
+        quickSort(0, arr.length - 1);
+      } else if (algo === 'merge') {
+        const mergeSort = (l, r) => {
+          if (l >= r) return;
+          const m = Math.floor((l + r) / 2);
+          mergeSort(l, m); mergeSort(m + 1, r);
+          const temp = arr.slice(l, r + 1);
+          let i = 0, j = m - l + 1, k = l;
+          while (i <= m - l && j <= r - l) {
+            arr[k++] = temp[i] < temp[j] ? temp[i++] : temp[j++]; push();
+          }
+          while (i <= m - l) arr[k++] = temp[i++], push();
+          while (j <= r - l) arr[k++] = temp[j++], push();
+        };
+        mergeSort(0, arr.length - 1);
+      } else if (algo === 'heap') {
+        const heapify = (n, i) => {
+          let largest = i, l = 2*i + 1, r = 2*i + 2;
+          if (l < n && arr[l] > arr[largest]) largest = l;
+          if (r < n && arr[r] > arr[largest]) largest = r;
+          if (largest !== i) {
+            [arr[i], arr[largest]] = [arr[largest], arr[i]]; push();
+            heapify(n, largest);
+          }
+        };
+        for (let i = Math.floor(arr.length/2)-1; i >= 0; i--) heapify(arr.length, i);
+        for (let i = arr.length - 1; i > 0; i--) {
+          [arr[0], arr[i]] = [arr[i], arr[0]]; push();
+          heapify(i, 0);
+        }
+      }
+      return result;
+    }
+  </script>
+</body>
+</html>
