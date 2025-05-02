@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>서브넷 마스크 계산기</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 1em;
+            width: 100%;
+        }
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+        .result {
+            background-color: #f4f4f4;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>서브넷 마스크 계산기</h1>
+
+    <label for="ipAddress">IP 주소 (예: 192.168.1.100):</label>
+    <input type="text" id="ipAddress" placeholder="IP 주소 입력">
+
+    <label for="subnetMask">서브넷 마스크 (예: 255.255.255.0):</label>
+    <input type="text" id="subnetMask" placeholder="서브넷 마스크 입력">
+
+    <button onclick="calculateSubnet()">계산하기</button>
+
+    <div id="result" class="result"></div>
+
+    <script>
+        function calculateSubnet() {
+            // 입력 값 가져오기
+            const ip = document.getElementById('ipAddress').value.trim();
+            const subnet = document.getElementById('subnetMask').value.trim();
+            const resultDiv = document.getElementById('result');
+            
+            if (!ip || !subnet) {
+                resultDiv.innerHTML = '<strong style="color: red;">IP 주소와 서브넷 마스크를 모두 입력해 주세요.</strong>';
+                return;
+            }
+
+            // IP와 서브넷 마스크를 각각 분리하여 계산
+            const ipParts = ip.split('.').map(num => parseInt(num, 10));
+            const subnetParts = subnet.split('.').map(num => parseInt(num, 10));
+
+            if (ipParts.length !== 4 || subnetParts.length !== 4) {
+                resultDiv.innerHTML = '<strong style="color: red;">잘못된 IP 주소 또는 서브넷 마스크 형식입니다.</strong>';
+                return;
+            }
+
+            // 서브넷 마스크 길이 계산
+            let subnetBits = 0;
+            subnetParts.forEach(num => {
+                let binary = num.toString(2).padStart(8, '0');
+                subnetBits += binary.split('1').length - 1;
+            });
+
+            const totalHosts = Math.pow(2, 32 - subnetBits) - 2; // 호스트 수 계산
+
+            // 서브넷 주소 계산
+            const subnetAddress = ipParts.map((octet, index) => octet & subnetParts[index]);
+
+            // 브로드캐스트 주소 계산
+            const broadcastAddress = ipParts.map((octet, index) => octet | (255 - subnetParts[index]));
+
+            // 결과 출력
+            resultDiv.innerHTML = `
+                <p><strong>서브넷 마스크 길이:</strong> /${subnetBits}</p>
+                <p><strong>서브넷 크기:</strong> ${Math.pow(2, 32 - subnetBits)} (총 IP 수)</p>
+                <p><strong>호스트 수 (유효한 IP 수):</strong> ${totalHosts}개</p>
+                <p><strong>서브넷 주소:</strong> ${subnetAddress.join('.')}</p>
+                <p><strong>브로드캐스트 주소:</strong> ${broadcastAddress.join('.')}</p>
+            `;
+        }
+    </script>
+
+</body>
+</html>
