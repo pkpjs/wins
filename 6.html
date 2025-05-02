@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>정처기 테스트 시뮬레이터</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f0f0; padding: 20px; }
+    h1, h2 { text-align: center; }
+    .section { background: #fff; padding: 20px; margin: 20px auto; width: 90%; max-width: 800px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    input, select, button { padding: 10px; font-size: 16px; margin: 10px 0; width: 100%; box-sizing: border-box; }
+    pre { background: #f9f9f9; padding: 10px; border-radius: 6px; overflow-x: auto; }
+    .output { font-weight: bold; color: green; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <h1>정보처리기사 테스트 시뮬레이터</h1>
+
+  <!-- 블랙 박스 테스트: 경계값 분석 -->
+  <div class="section">
+    <h2>블랙 박스 테스트 - 경계값 분석</h2>
+    <p>점수를 입력하여 등급을 확인하세요. (0~100 사이의 정수)</p>
+    <input type="number" id="scoreInput" placeholder="예: 85">
+    <button onclick="evaluateScore()">등급 확인</button>
+    <div class="output" id="scoreResult"></div>
+  </div>
+
+  <!-- 화이트 박스 테스트: 조건 커버리지 -->
+  <div class="section">
+    <h2>화이트 박스 테스트 - 조건 커버리지</h2>
+    <p>다음 코드를 참고하여 입력값에 따른 결과를 확인하세요.</p>
+    <pre>
+function checkAccess(age, isMember) {
+  if (age >= 18 && isMember) {
+    return "성인 회원 접근 허용";
+  } else if (age >= 18 && !isMember) {
+    return "성인 비회원 접근 제한";
+  } else {
+    return "미성년자 접근 제한";
+  }
+}
+    </pre>
+    <input type="number" id="ageInput" placeholder="나이 입력 (예: 20)">
+    <select id="memberInput">
+      <option value="true">회원</option>
+      <option value="false">비회원</option>
+    </select>
+    <button onclick="checkAccess()">결과 확인</button>
+    <div class="output" id="accessResult"></div>
+  </div>
+
+  <!-- 화이트 박스 테스트: 루프 테스트 -->
+  <div class="section">
+    <h2>화이트 박스 테스트 - 루프 테스트</h2>
+    <p>숫자 목록을 입력하여 짝수의 개수를 확인하세요. (공백으로 구분)</p>
+    <input type="text" id="numberList" placeholder="예: 1 2 3 4 5">
+    <button onclick="countEvenNumbers()">짝수 개수 확인</button>
+    <div class="output" id="evenCountResult"></div>
+  </div>
+
+  <!-- 블랙 박스 테스트: 결정 테이블 테스트 -->
+  <div class="section">
+    <h2>블랙 박스 테스트 - 결정 테이블 테스트</h2>
+    <p>다음 조건에 따라 할인율을 확인하세요:</p>
+    <ul>
+      <li>회원 여부</li>
+      <li>구매 금액</li>
+    </ul>
+    <input type="number" id="purchaseAmount" placeholder="구매 금액 입력 (예: 120000)">
+    <select id="isMember">
+      <option value="true">회원</option>
+      <option value="false">비회원</option>
+    </select>
+    <button onclick="calculateDiscount()">할인율 확인</button>
+    <div class="output" id="discountResult"></div>
+  </div>
+
+  <script>
+    // 경계값 분석
+    function evaluateScore() {
+      const score = parseInt(document.getElementById('scoreInput').value);
+      let grade = '';
+      if (isNaN(score) || score < 0 || score > 100) {
+        grade = '유효한 점수를 입력하세요 (0~100)';
+      } else if (score >= 90) {
+        grade = 'A';
+      } else if (score >= 80) {
+        grade = 'B';
+      } else if (score >= 70) {
+        grade = 'C';
+      } else if (score >= 60) {
+        grade = 'D';
+      } else {
+        grade = 'F';
+      }
+      document.getElementById('scoreResult').textContent = `등급: ${grade}`;
+    }
+
+    // 조건 커버리지
+    function checkAccess() {
+      const age = parseInt(document.getElementById('ageInput').value);
+      const isMember = document.getElementById('memberInput').value === 'true';
+      let result = '';
+      if (isNaN(age)) {
+        result = '나이를 입력하세요.';
+      } else if (age >= 18 && isMember) {
+        result = '성인 회원 접근 허용';
+      } else if (age >= 18 && !isMember) {
+        result = '성인 비회원 접근 제한';
+      } else {
+        result = '미성년자 접근 제한';
+      }
+      document.getElementById('accessResult').textContent = result;
+    }
+
+    // 루프 테스트
+    function countEvenNumbers() {
+      const input = document.getElementById('numberList').value.trim();
+      if (!input) {
+        document.getElementById('evenCountResult').textContent = '숫자 목록을 입력하세요.';
+        return;
+      }
+      const numbers = input.split(/\s+/).map(Number);
+      if (numbers.some(isNaN)) {
+        document.getElementById('evenCountResult').textContent = '유효한 숫자 목록을 입력하세요.';
+        return;
+      }
+      const evenCount = numbers.filter(num => num % 2 === 0).length;
+      document.getElementById('evenCountResult').textContent = `짝수 개수: ${evenCount}`;
+    }
+
+    // 결정 테이블 테스트
+    function calculateDiscount() {
+      const amount = parseInt(document.getElementById('purchaseAmount').value);
+      const isMember = document.getElementById('isMember').value === 'true';
+      let discount = 0;
+      if (isNaN(amount) || amount < 0) {
+        document.getElementById('discountResult').textContent = '유효한 금액을 입력하세요.';
+        return;
+      }
+      if (isMember && amount >= 100000) {
+        discount = 20;
+      } else if (isMember && amount >= 50000) {
+        discount = 10;
+      } else if (!isMember && amount >= 100000) {
+        discount = 5;
+      } else {
+        discount = 0;
+      }
+      document.getElementById('discountResult').textContent = `할인율: ${discount}%`;
+    }
+  </script>
+
+</body>
+</html>
