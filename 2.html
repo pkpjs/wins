@@ -118,17 +118,19 @@
       renderCommands();
     }
 
-    function downloadCommands() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      const blob = new Blob([saved], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
+  function downloadCommands() {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    const text = saved.join("\n"); // 줄바꿈 구분
+    const blob = new Blob([text], { type: "text/plain" });
+  
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "security-commands.txt"; // .txt 확장자
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "security-commands.json";
-      a.click();
-      URL.revokeObjectURL(url);
-    }
 
     function importCommands(event) {
       const file = event.target.files[0];
