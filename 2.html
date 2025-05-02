@@ -38,35 +38,83 @@
       padding: 10px;
       margin-bottom: 10px;
       border-left: 5px solid #3498db;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cmd-text {
+      flex-grow: 1;
+    }
+    .delete-btn {
+      background-color: #e74c3c;
+    }
+    .delete-btn:hover {
+      background-color: #c0392b;
     }
   </style>
 </head>
 <body>
   <h1>자주 사용하는 보안 명령어 저장소</h1>
 
-  <div id="commandList">
-    <div class="cmd"><strong>nmap</strong>: 네트워크 스캐닝</div>
-    <div class="cmd"><strong>netcat</strong>: 포트 리스닝</div>
-    <div class="cmd"><strong>openssl</strong>: SSL/TLS 연결 검사</div>
-  </div>
+  <div id="commandList"></div>
 
   <h2>명령어 추가</h2>
   <input type="text" id="newCommand" placeholder="예: curl -I http://example.com">
   <button onclick="addCommand()">추가</button>
 
   <script>
+    const STORAGE_KEY = 'securityCommands';
+
+    function loadCommands() {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      saved.forEach((cmd, index) => appendCommand(cmd, index));
+    }
+
+    function saveCommands(commands) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(commands));
+    }
+
+    function appendCommand(text, index) {
+      const cmdDiv = document.createElement("div");
+      cmdDiv.className = "cmd";
+
+      const cmdText = document.createElement("div");
+      cmdText.className = "cmd-text";
+      cmdText.innerHTML = `<strong>${text.split(' ')[0]}</strong>: ${text}`;
+
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "삭제";
+      delBtn.className = "delete-btn";
+      delBtn.onclick = () => {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        saved.splice(index, 1);
+        saveCommands(saved);
+        renderCommands();
+      };
+
+      cmdDiv.appendChild(cmdText);
+      cmdDiv.appendChild(delBtn);
+      document.getElementById("commandList").appendChild(cmdDiv);
+    }
+
+    function renderCommands() {
+      document.getElementById("commandList").innerHTML = "";
+      loadCommands();
+    }
+
     function addCommand() {
       const input = document.getElementById("newCommand");
       const value = input.value.trim();
       if (!value) return;
 
-      const cmdDiv = document.createElement("div");
-      cmdDiv.className = "cmd";
-      cmdDiv.innerHTML = `<strong>${value.split(' ')[0]}</strong>: ${value}`;
-      document.getElementById("commandList").appendChild(cmdDiv);
-
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      saved.push(value);
+      saveCommands(saved);
       input.value = "";
+      renderCommands();
     }
+
+    window.onload = renderCommands;
   </script>
 </body>
 </html>
