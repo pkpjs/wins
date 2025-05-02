@@ -13,6 +13,7 @@
     }
     .highlight { background-color: orange !important; }
     .array-log { margin-top: 20px; font-size: 16px; background: #fff; padding: 10px; border-radius: 6px; white-space: pre-wrap; }
+    .highlight-log { color: orange; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -26,6 +27,13 @@
     <option value="quick">퀵 정렬</option>
     <option value="merge">병합 정렬</option>
     <option value="heap">힙 정렬</option>
+    <option value="radix">기수 정렬</option>
+    <option value="bucket">버킷 정렬</option>
+    <option value="counting">카운팅 정렬</option>
+    <option value="tim">Tim Sort</option>
+    <option value="comb">Comb Sort</option>
+    <option value="pancake">Pancake Sort</option>
+    <option value="cocktail">Cocktail Shaker Sort</option>
   </select>
   <button onclick="startSort()">시작</button>
   <button onclick="nextStep()">다음 단계</button>
@@ -78,7 +86,7 @@
       const container = document.getElementById('bars');
       container.innerHTML = '';
       const max = Math.max(...arr);
-      arr.forEach(val => {
+      arr.forEach((val, index) => {
         const bar = document.createElement('div');
         bar.className = 'bar';
         bar.style.height = (val / max * 100 + 50) + 'px';
@@ -88,18 +96,42 @@
 
     function renderLog(arr) {
       const log = document.getElementById('arrayLog');
-      log.textContent += `단계 ${stepIndex + 1}: ${arr.join(' ')}\n`;
+      const currentLog = document.createElement('div');
+      currentLog.textContent = `단계 ${stepIndex + 1}: `;
+
+      // 변경된 숫자만 강조
+      const changedIndexes = getChangedIndexes(arr);
+      arr.forEach((val, index) => {
+        if (changedIndexes.includes(index)) {
+          const logItem = document.createElement('span');
+          logItem.textContent = val + " ";
+          logItem.classList.add('highlight-log');
+          currentLog.appendChild(logItem);
+        } else {
+          currentLog.appendChild(document.createTextNode(val + " "));
+        }
+      });
+
+      log.appendChild(currentLog);
       log.scrollTop = log.scrollHeight;
+    }
+
+    function getChangedIndexes(arr) {
+      const previousStep = steps[stepIndex - 1] || [];
+      return arr.map((val, index) => previousStep[index] !== val ? index : -1).filter(index => index !== -1);
     }
 
     function generateSteps(arr, algo) {
       const result = [];
       const push = () => result.push(arr.slice());
+
       if (algo === 'bubble') {
         for (let i = 0; i < arr.length; i++) {
           for (let j = 0; j < arr.length - i - 1; j++) {
-            if (arr[j] > arr[j + 1]) [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
-            push();
+            if (arr[j] > arr[j + 1]) {
+              [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+              push();
+            }
           }
         }
       } else if (algo === 'selection') {
@@ -172,6 +204,113 @@
         for (let i = arr.length - 1; i > 0; i--) {
           [arr[0], arr[i]] = [arr[i], arr[0]]; push();
           heapify(i, 0);
+        }
+      } else if (algo === 'radix') {
+        let max = Math.max(...arr);
+        for (let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
+          let output = new Array(arr.length), count = new Array(10).fill(0);
+          for (let i = 0; i < arr.length; i++) count[Math.floor(arr[i] / exp) % 10]++;
+          for (let i = 1; i < 10; i++) count[i] += count[i - 1];
+          for (let i = arr.length - 1; i >= 0; i--) {
+            output[count[Math.floor(arr[i] / exp) % 10] - 1] = arr[i];
+            count[Math.floor(arr[i] / exp) % 10]--;
+          }
+          for (let i = 0; i < arr.length; i++) arr[i] = output[i];
+          push();
+        }
+      } else if (algo === 'bucket') {
+        let maxVal = Math.max(...arr), size = Math.floor(maxVal / arr.length) + 1;
+        let buckets = new Array(size).fill().map(() => []);
+        for (let i = 0; i < arr.length; i++) buckets[Math.floor(arr[i] / size)].push(arr[i]);
+        for (let i = 0; i < buckets.length; i++) buckets[i].sort((a, b) => a - b);
+        arr = [].concat(...buckets);
+        push();
+      } else if (algo === 'counting') {
+        let maxVal = Math.max(...arr), count = new Array(maxVal + 1).fill(0);
+        arr.forEach(val => count[val]++);
+        arr = [];
+        for (let i = 0; i <= maxVal; i++) {
+          while (count[i]--) arr.push(i);
+        }
+        push();
+      } else if (algo === 'tim') {
+        const timSort = (arr) => {
+          const RUN = 32;
+          let n = arr.length;
+          for (let i = 0; i < n; i += RUN) {
+            insertionSort(arr, i, Math.min((i + 31), (n - 1)));
+          }
+          for (let size = RUN; size < n; size = 2 * size) {
+            for (let left = 0; left < n; left += 2 * size) {
+              let mid = Math.min(n - 1, left + size - 1);
+              let right = Math.min((left + 2 * size - 1), (n - 1));
+              if (mid < right) merge(arr, left, mid, right);
+            }
+          }
+        };
+        timSort(arr);
+        push();
+      } else if (algo === 'comb') {
+        let gap = arr.length;
+        let shrink = 1.3;
+        let sorted = false;
+        while (!sorted) {
+          gap = Math.floor(gap / shrink);
+          if (gap <= 1) {
+            gap = 1;
+            sorted = true;
+          }
+          for (let i = 0; i + gap < arr.length; i++) {
+            if (arr[i] > arr[i + gap]) {
+              [arr[i], arr[i + gap]] = [arr[i + gap], arr[i]]; 
+              push();
+              sorted = false;
+            }
+          }
+        }
+      } else if (algo === 'pancake') {
+        let flip = (arr, i) => {
+          let start = 0;
+          while (start < i) {
+            [arr[start], arr[i]] = [arr[i], arr[start]];
+            start++;
+            i--;
+          }
+        };
+        let flipSort = (arr) => {
+          let n = arr.length;
+          for (let curr_size = n; curr_size > 1; curr_size--) {
+            let max_index = arr.indexOf(Math.max(...arr.slice(0, curr_size)));
+            if (max_index !== curr_size - 1) {
+              if (max_index !== 0) {
+                flip(arr, max_index);
+                push();
+              }
+              flip(arr, curr_size - 1);
+              push();
+            }
+          }
+        };
+        flipSort(arr);
+        push();
+      } else if (algo === 'cocktail') {
+        let start = 0, end = arr.length - 1, swapped = true;
+        while (swapped) {
+          swapped = false;
+          for (let i = start; i < end; i++) {
+            if (arr[i] > arr[i + 1]) {
+              [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]]; swapped = true; push();
+            }
+          }
+          if (!swapped) break;
+          swapped = false;
+          end--;
+          for (let i = end; i > start; i--) {
+            if (arr[i] < arr[i - 1]) {
+              [arr[i], arr[i - 1]] = [arr[i - 1], arr[i]]; swapped = true; push();
+            }
+          }
+          start++;
         }
       }
       return result;
