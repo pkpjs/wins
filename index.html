@@ -19,12 +19,18 @@
     }
     a:hover { background: #45a049; }
   </style>
+  <script>
+    function showAlertAndRedirect() {
+      alert("강의실에서만가능. 서버 켜달라고 저한테 말해야 합니다.");
+      window.location.href = "http://10.100.4.66:9001/index.php"; // 페이지 이동
+    }
+  </script>
 </head>
 <body>
 
   <h1>메인 페이지</h1>
   <p><a href="https://www.comcbt.com/">정처기 Let's GO~!</a></p>
-  <p><a href="http://10.100.4.66:9001/index.php">SQL Let's GO~!</a></p>
+  <p><a href="javascript:void(0);" onclick="showAlertAndRedirect()">SQL Let's GO~!</a></p>
 
   <div>
     <a href="1.html">서브넷 마스크 계산</a>
