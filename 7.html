@@ -10,6 +10,28 @@
     table { border-collapse: collapse; margin-top: 10px; width: 100%; }
     th, td { border: 1px solid #aaa; padding: 5px; text-align: left; }
     h3 { margin-top: 30px; }
+    .code-container {
+      position: relative;
+      margin-top: 20px;
+    }
+    pre {
+      background-color: #f4f4f4;
+      padding: 10px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -22,6 +44,13 @@
 
   <div id="tables"></div>
   <div id="selectResult"></div>
+
+  <!-- SQL 예시 코드 섹션 -->
+  <button onclick="showSQLExample()">SQL 예시 보기</button>
+  <div id="sqlExampleContainer" class="code-container" style="display: none;">
+    <pre id="sqlExample"></pre>
+    <button class="copy-btn" onclick="copySQLExample()">복사</button>
+  </div>
 
   <script>
     let db;
@@ -37,7 +66,6 @@
       const message = document.getElementById('message');
       const selectResult = document.getElementById('selectResult');
 
-      // 먼저 selectResult를 초기화해서 결과가 중복되게 보이지 않도록 함
       selectResult.innerHTML = '';
 
       try {
@@ -75,10 +103,10 @@
             selectResult.appendChild(table);
           }
         } else {
-          db.run(sql); // 쿼리 실행
+          db.run(sql);
           message.textContent = '✅ 쿼리 실행 성공';
           refreshTables();
-          showAffectedResults(sql); // INSERT, UPDATE, DELETE 결과를 보여주기 위한 함수 추가
+          showAffectedResults(sql);
         }
       } catch (e) {
         message.textContent = `❌ 오류: ${e.message}`;
@@ -161,7 +189,6 @@
     function showAffectedResults(sql) {
       const selectResult = document.getElementById('selectResult');
       
-      // 테이블 목록만 보여주는 것 외에, 변경된 데이터를 보여주는 부분을 추가
       if (sql.toUpperCase().startsWith('INSERT')) {
         selectResult.innerHTML += '<p>✅ 데이터가 성공적으로 삽입되었습니다.</p>';
       } else if (sql.toUpperCase().startsWith('UPDATE')) {
@@ -170,7 +197,6 @@
         selectResult.innerHTML += '<p>✅ 데이터가 성공적으로 삭제되었습니다.</p>';
       }
       
-      // 데이터베이스 테이블을 확인하고 결과를 보여주는 부분
       const lastAffectedResult = db.exec("SELECT name FROM sqlite_master WHERE type='table';");
 
       if (lastAffectedResult.length > 0) {
@@ -202,6 +228,56 @@
         table.appendChild(tbody);
         selectResult.appendChild(table);
       }
+    }
+
+    function showSQLExample() {
+      const exampleSQL = `
+-- R1 테이블 생성
+CREATE TABLE R1 (
+    학번 INT PRIMARY KEY,
+    이름 VARCHAR(50),
+    학년 INT,
+    학과 VARCHAR(50),
+    주소 VARCHAR(50)
+);
+
+-- R1 테이블에 데이터 삽입
+INSERT INTO R1 (학번, 이름, 학년, 학과, 주소) VALUES
+(1000, '홍길동', 1, '컴퓨터공학', '서울'),
+(2000, '김철수', 1, '전기공학', '경기'),
+(3000, '강남길', 2, '전자공학', '경기'),
+(4000, '오말자', 2, '컴퓨터공학', '경기'),
+(5000, '장미화', 3, '전자공학', '서울');
+
+-- R2 테이블 생성
+CREATE TABLE R2 (
+    학번 INT,
+    과목번호 VARCHAR(10),
+    과목이름 VARCHAR(50),
+    학점 VARCHAR(5),
+    점수 INT,
+    PRIMARY KEY (학번, 과목번호)
+);
+
+-- R2 테이블에 데이터 삽입
+INSERT INTO R2 (학번, 과목번호, 과목이름, 학점, 점수) VALUES
+(1000, 'C100', '컴퓨터구조', 'A', 91),
+(2000, 'C200', '데이터베이스', 'A+', 99),
+(3000, 'C100', '컴퓨터구조', 'B+', 89),
+(4000, 'C200', '데이터베이스', 'B', 85),
+(5000, 'C200', '데이터베이스', 'A', 93),
+(3000, 'C300', '운영체제', 'B+', 88),
+(5000, 'C300', '운영체제', 'B', 82);
+      `;
+      document.getElementById('sqlExample').textContent = exampleSQL;
+      document.getElementById('sqlExampleContainer').style.display = 'block';
+    }
+
+    function copySQLExample() {
+      const sqlText = document.getElementById('sqlExample');
+      navigator.clipboard.writeText(sqlText.textContent).then(() => {
+        alert('SQL 예시가 복사되었습니다!');
+      });
     }
   </script>
 
