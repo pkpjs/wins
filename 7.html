@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>SQL 시뮬레이터</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    textarea, button { width: 100%; font-size: 1rem; margin-top: 10px; }
+    table { border-collapse: collapse; margin-top: 10px; width: 100%; }
+    th, td { border: 1px solid #aaa; padding: 5px; text-align: left; }
+    h3 { margin-top: 30px; }
+  </style>
+</head>
+<body>
+
+  <h2>🧠 SQL 시뮬레이터 (테이블 구조와 데이터 자동 표시)</h2>
+  <textarea id="sql" rows="5" placeholder="여기에 SQL 문을 입력하세요"></textarea>
+  <button onclick="executeSQL()">실행</button>
+
+  <pre id="message">⏳ 데이터베이스 초기화 중...</pre>
+
+  <div id="tables"></div>
+  <div id="selectResult"></div>
+
+  <script>
+    let db;
+
+    initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}` }).then(SQL => {
+      db = new SQL.Database();
+      document.getElementById('message').textContent = '✅ 데이터베이스 준비 완료';
+      refreshTables();
+    });
+
+    function executeSQL() {
+      const sql = document.getElementById('sql').value;
+      const message = document.getElementById('message');
+      const selectResult = document.getElementById('selectResult');
+
+      // 먼저 selectResult를 초기화해서 결과가 중복되게 보이지 않도록 함
+      selectResult.innerHTML = '';
+
+      try {
+        if (sql.toUpperCase().startsWith('SELECT')) {
+          const result = db.exec(sql);
+          if (result.length === 0) {
+            selectResult.textContent = '📭 데이터 없음';
+          } else {
+            const table = document.createElement('table');
+            const caption = document.createElement('caption');
+            caption.innerText = `쿼리 결과 (${result[0].values.length} 행)`;
+            table.appendChild(caption);
+
+            const thead = document.createElement('thead');
+            const tr = document.createElement('tr');
+            result[0].columns.forEach(col => {
+              const th = document.createElement('th');
+              th.innerText = col;
+              tr.appendChild(th);
+            });
+            thead.appendChild(tr);
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+            result[0].values.forEach(row => {
+              const tr = document.createElement('tr');
+              row.forEach(val => {
+                const td = document.createElement('td');
+                td.innerText = val;
+                tr.appendChild(td);
+              });
+              tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+            selectResult.appendChild(table);
+          }
+        } else {
+          db.run(sql); // 쿼리 실행
+          message.textContent = '✅ 쿼리 실행 성공';
+          refreshTables();
+          showAffectedResults(sql); // INSERT, UPDATE, DELETE 결과를 보여주기 위한 함수 추가
+        }
+      } catch (e) {
+        message.textContent = `❌ 오류: ${e.message}`;
+      }
+    }
+
+    function refreshTables() {
+      const container = document.getElementById('tables');
+      container.innerHTML = '';
+      const tables = db.exec("SELECT name FROM sqlite_master WHERE type='table';");
+
+      if (tables.length === 0 || tables[0].values.length === 0) {
+        container.innerHTML = '<p>📭 테이블이 없습니다.</p>';
+        return;
+      }
+
+      tables[0].values.forEach(([tableName]) => {
+        const button = document.createElement('button');
+        button.innerText = `📂 ${tableName} 테이블 보기`;
+        button.onclick = () => showTable(tableName);
+        container.appendChild(button);
+      });
+    }
+
+    function showTable(tableName) {
+      const container = document.getElementById('tables');
+      let tableContainer = document.getElementById(`table-${tableName}`);
+
+      if (tableContainer) {
+        tableContainer.style.display = tableContainer.style.display === 'none' ? 'block' : 'none';
+        return;
+      }
+
+      tableContainer = document.createElement('div');
+      tableContainer.id = `table-${tableName}`;
+      const result = db.exec(`SELECT * FROM ${tableName}`);
+      const table = document.createElement('table');
+      const caption = document.createElement('caption');
+      caption.innerText = `${tableName} 테이블`;
+      table.appendChild(caption);
+
+      if (result.length > 0) {
+        const headers = result[0].columns;
+        const rows = result[0].values;
+
+        const thead = document.createElement('thead');
+        const tr = document.createElement('tr');
+        headers.forEach(h => {
+          const th = document.createElement('th');
+          th.innerText = h;
+          tr.appendChild(th);
+        });
+        thead.appendChild(tr);
+        table.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        rows.forEach(row => {
+          const tr = document.createElement('tr');
+          row.forEach(val => {
+            const td = document.createElement('td');
+            td.innerText = val;
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+      } else {
+        const empty = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 99;
+        td.innerText = '(데이터 없음)';
+        empty.appendChild(td);
+        table.appendChild(empty);
+      }
+
+      tableContainer.appendChild(table);
+      container.appendChild(tableContainer);
+    }
+
+    function showAffectedResults(sql) {
+      const selectResult = document.getElementById('selectResult');
+      
+      // 테이블 목록만 보여주는 것 외에, 변경된 데이터를 보여주는 부분을 추가
+      if (sql.toUpperCase().startsWith('INSERT')) {
+        selectResult.innerHTML += '<p>✅ 데이터가 성공적으로 삽입되었습니다.</p>';
+      } else if (sql.toUpperCase().startsWith('UPDATE')) {
+        selectResult.innerHTML += '<p>✅ 데이터가 성공적으로 업데이트되었습니다.</p>';
+      } else if (sql.toUpperCase().startsWith('DELETE')) {
+        selectResult.innerHTML += '<p>✅ 데이터가 성공적으로 삭제되었습니다.</p>';
+      }
+      
+      // 데이터베이스 테이블을 확인하고 결과를 보여주는 부분
+      const lastAffectedResult = db.exec("SELECT name FROM sqlite_master WHERE type='table';");
+
+      if (lastAffectedResult.length > 0) {
+        const table = document.createElement('table');
+        const caption = document.createElement('caption');
+        caption.innerText = `쿼리 결과 (테이블 목록)`;
+        table.appendChild(caption);
+
+        const thead = document.createElement('thead');
+        const tr = document.createElement('tr');
+        lastAffectedResult[0].columns.forEach(col => {
+          const th = document.createElement('th');
+          th.innerText = col;
+          tr.appendChild(th);
+        });
+        thead.appendChild(tr);
+        table.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        lastAffectedResult[0].values.forEach(row => {
+          const tr = document.createElement('tr');
+          row.forEach(val => {
+            const td = document.createElement('td');
+            td.innerText = val;
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        selectResult.appendChild(table);
+      }
+    }
+  </script>
+
+</body>
+</html>
