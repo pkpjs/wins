@@ -37,11 +37,8 @@
 
     <h1>서브넷 마스크 계산기</h1>
 
-    <label for="ipAddress">IP 주소 (예: 192.168.1.100):</label>
-    <input type="text" id="ipAddress" placeholder="IP 주소 입력">
-
-    <label for="subnetMask">서브넷 마스크 (예: 255.255.255.0):</label>
-    <input type="text" id="subnetMask" placeholder="서브넷 마스크 입력">
+    <label for="ipAddress">IP 주소와 서브넷 길이 (예: 10.1.1.1/27):</label>
+    <input type="text" id="ipAddress" placeholder="IP 주소와 서브넷 길이 입력">
 
     <button onclick="calculateSubnet()">계산하기</button>
 
@@ -49,47 +46,80 @@
 
     <script>
         function calculateSubnet() {
-            // 입력 값 가져오기
-            const ip = document.getElementById('ipAddress').value.trim();
-            const subnet = document.getElementById('subnetMask').value.trim();
+            const input = document.getElementById('ipAddress').value.trim();
             const resultDiv = document.getElementById('result');
             
-            if (!ip || !subnet) {
-                resultDiv.innerHTML = '<strong style="color: red;">IP 주소와 서브넷 마스크를 모두 입력해 주세요.</strong>';
+            if (!input) {
+                resultDiv.innerHTML = '<strong style="color: red;">IP 주소와 서브넷 길이를 입력해 주세요.</strong>';
                 return;
             }
 
-            // IP와 서브넷 마스크를 각각 분리하여 계산
+            // CIDR 표기법에서 IP 주소와 서브넷 길이 분리
+            const [ip, subnetLength] = input.split('/');
+            if (!ip || !subnetLength || isNaN(subnetLength)) {
+                resultDiv.innerHTML = '<strong style="color: red;">잘못된 입력 형식입니다. 예시: 10.1.1.1/27</strong>';
+                return;
+            }
+
+            // IP 주소를 4개의 옥텟으로 분리
             const ipParts = ip.split('.').map(num => parseInt(num, 10));
-            const subnetParts = subnet.split('.').map(num => parseInt(num, 10));
-
-            if (ipParts.length !== 4 || subnetParts.length !== 4) {
-                resultDiv.innerHTML = '<strong style="color: red;">잘못된 IP 주소 또는 서브넷 마스크 형식입니다.</strong>';
+            if (ipParts.length !== 4 || ipParts.some(num => num < 0 || num > 255)) {
+                resultDiv.innerHTML = '<strong style="color: red;">잘못된 IP 주소 형식입니다.</strong>';
                 return;
             }
 
-            // 서브넷 마스크 길이 계산
-            let subnetBits = 0;
-            subnetParts.forEach(num => {
-                let binary = num.toString(2).padStart(8, '0');
-                subnetBits += binary.split('1').length - 1;
-            });
+            // 서브넷 길이를 바탕으로 서브넷 마스크 계산
+            let subnetMaskParts = [];
+            let bitsLeft = parseInt(subnetLength, 10);
+            
+            for (let i = 0; i < 4; i++) {
+                if (bitsLeft >= 8) {
+                    subnetMaskParts.push(255);
+                    bitsLeft -= 8;
+                } else {
+                    subnetMaskParts.push(256 - Math.pow(2, 8 - bitsLeft));
+                    bitsLeft = 0;
+                }
+            }
 
-            const totalHosts = Math.pow(2, 32 - subnetBits) - 2; // 호스트 수 계산
+            const subnetMask = subnetMaskParts.join('.');
 
             // 서브넷 주소 계산
+            const subnetParts = subnetMaskParts;
             const subnetAddress = ipParts.map((octet, index) => octet & subnetParts[index]);
 
             // 브로드캐스트 주소 계산
             const broadcastAddress = ipParts.map((octet, index) => octet | (255 - subnetParts[index]));
 
+            // 호스트 수 계산
+            const totalHosts = Math.pow(2, 32 - subnetLength) - 2; // 유효한 호스트 수
+
+            // 32비트 이진수 표시 함수 (8비트마다 / 구분)
+            function toBinaryString(num) {
+                return num.toString(2).padStart(8, '0');
+            }
+
+            // IP 주소, 서브넷 마스크, 서브넷 주소, 브로드캐스트 주소를 32비트 이진수로 변환
+            const binaryIP = ipParts.map(toBinaryString).join('');
+            const binarySubnetMask = subnetMaskParts.map(toBinaryString).join('');
+            const binarySubnetAddress = subnetAddress.map(toBinaryString).join('');
+            const binaryBroadcastAddress = broadcastAddress.map(toBinaryString).join('');
+
+            // 8비트마다 /로 구분한 형식으로 표시
+            function formatBinaryWithSlash(binary) {
+                return binary.match(/.{8}/g).join('/');
+            }
+
             // 결과 출력
             resultDiv.innerHTML = `
-                <p><strong>서브넷 마스크 길이:</strong> /${subnetBits}</p>
-                <p><strong>서브넷 크기:</strong> ${Math.pow(2, 32 - subnetBits)} (총 IP 수)</p>
+                <p><strong>서브넷 마스크:</strong> ${subnetMask} (/ ${subnetLength})</p>
+                <p><strong>서브넷 마스크 (32비트):</strong> ${formatBinaryWithSlash(binarySubnetMask)}</p>
+                <p><strong>서브넷 크기:</strong> ${Math.pow(2, 32 - subnetLength)} (총 IP 수)</p>
                 <p><strong>호스트 수 (유효한 IP 수):</strong> ${totalHosts}개</p>
                 <p><strong>서브넷 주소:</strong> ${subnetAddress.join('.')}</p>
+                <p><strong>서브넷 주소 (32비트):</strong> ${formatBinaryWithSlash(binarySubnetAddress)}</p>
                 <p><strong>브로드캐스트 주소:</strong> ${broadcastAddress.join('.')}</p>
+                <p><strong>브로드캐스트 주소 (32비트):</strong> ${formatBinaryWithSlash(binaryBroadcastAddress)}</p>
             `;
         }
     </script>
