@@ -64,7 +64,7 @@
 
   <h2>백업 및 복원</h2>
   <button onclick="downloadCommands()">명령어 다운로드</button>
-  <input type="file" id="fileInput" accept=".json" onchange="importCommands(event)">
+  <input type="file" id="fileInput" accept=".txt,.json" onchange="importCommands(event)">
 
   <script>
     const STORAGE_KEY = 'securityCommands';
@@ -118,19 +118,18 @@
       renderCommands();
     }
 
-  function downloadCommands() {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    const text = saved.join("\n"); // 줄바꿈 구분
-    const blob = new Blob([text], { type: "text/plain" });
-  
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "security-commands.txt"; // .txt 확장자
-    a.click();
-    URL.revokeObjectURL(url);
-  }
+    function downloadCommands() {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      const text = saved.join("\n");
+      const blob = new Blob([text], { type: "text/plain" });
 
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "security-commands.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
 
     function importCommands(event) {
       const file = event.target.files[0];
@@ -138,15 +137,21 @@
 
       const reader = new FileReader();
       reader.onload = function(e) {
+        const text = e.target.result;
         try {
-          const data = JSON.parse(e.target.result);
-          if (Array.isArray(data)) {
-            saveCommands(data);
-            renderCommands();
-            alert("불러오기 완료!");
+          let data;
+          if (file.name.endsWith('.json')) {
+            data = JSON.parse(text);
+            if (!Array.isArray(data)) throw new Error("Invalid JSON");
+          } else if (file.name.endsWith('.txt')) {
+            data = text.split(/\r?\n/).map(line => line.trim()).filter(line => line);
           } else {
-            alert("올바른 JSON 형식이 아닙니다.");
+            alert("지원하지 않는 파일 형식입니다. .json 또는 .txt 파일을 업로드해주세요.");
+            return;
           }
+          saveCommands(data);
+          renderCommands();
+          alert("불러오기 완료!");
         } catch (err) {
           alert("파일을 읽을 수 없습니다.");
         }
