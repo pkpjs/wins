@@ -19,3 +19,6 @@ Reset branch 'main'
 From https://github.com/pkpjs/wins
  * branch            main       -> FETCH_HEAD
 Reset branch 'main'
+To https://github.com/pkpjs/wins
+   88f5421..1987b6d  main -> main
+Reset branch 'main'
