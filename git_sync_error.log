@@ -1,2 +1,10 @@
 Switched to a new branch 'main'
 fatal: no commit on branch 'main' yet
+From https://github.com/pkpjs/wins
+ * [new branch]      main       -> origin/main
+error: cannot rebase: You have unstaged changes.
+error: Please commit or stash them.
+From https://github.com/pkpjs/wins
+ * branch            main       -> FETCH_HEAD
+fatal: refusing to merge unrelated histories
+Reset branch 'main'
