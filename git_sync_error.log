@@ -8,3 +8,11 @@ From https://github.com/pkpjs/wins
  * branch            main       -> FETCH_HEAD
 fatal: refusing to merge unrelated histories
 Reset branch 'main'
+Rebasing (1/2)
+Rebasing (2/2)
+
+[KSuccessfully rebased and updated refs/heads/main.
+From https://github.com/pkpjs/wins
+ * branch            main       -> FETCH_HEAD
+Cloning into 'wins'...
+Reset branch 'main'
