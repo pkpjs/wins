@@ -1,103 +1,11 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <title>메인 페이지</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      text-align: center;
-      padding: 50px;
-      background: #f4f7fb;
-      color: #333;
-    }
-    h1 {
-      font-size: 36px;
-      color: #2c3e50;
-      margin-bottom: 30px;
-    }
-    .links-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    a {
-      display: inline-block;
-      padding: 15px 30px;
-      margin: 10px 0;
-      font-size: 18px;
-      background-color: #4CAF50;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    a:hover {
-      background-color: #45a049;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    }
-    a:active {
-      transform: translateY(2px);
-    }
-    p {
-      font-size: 18px;
-      color: #555;
-    }
-    .download-link {
-      margin-top: 30px;
-      font-size: 20px;
-      background-color: #2980b9;
-      border-radius: 5px;
-      padding: 12px 20px;
-      color: white;
-    }
-    .download-link:hover {
-      background-color: #3498db;
-    }
-    .alert-box {
-      margin-top: 20px;
-      font-size: 16px;
-      color: #e74c3c;
-      font-weight: bold;
-    }
-  </style>
-  <script>
-    function showAlertAndRedirect() {
-      alert("강의실에서만가능. 서버 켜달라고 저한테 말해야 합니다.");
-      window.location.href = "http://10.100.4.66:9001/index.php"; // 페이지 이동
-    }
-  </script>
-</head>
-<body>
+""" 🛠️ Git 자동 크랭크 구성표
 
-  <h1>메인 페이지</h1>
-  
-  <p><a href="https://www.comcbt.com/">정처기 Let's GO~!</a></p>
-  <p><a href="javascript:void(0);" onclick="showAlertAndRedirect()">SQL Let's GO~!</a></p>
+📁 폴더 선택: 캠프장을 기재합니다. 🔗 원격 서버 URL: GitHub 등 원격 서버의 주소를 입력합니다. 브랜치 (기본: 메인): 작업할 브랜치를 직접 입력해야 합니다. 커밋셈: 기본적으로 수정하거나 그대로 있을 수 있습니다. 🔁 푸시 실행:
 
-  <!-- 알림 메시지 이동 -->
-  <div class="alert-box">
-    <p>※ 강의실에서만 가능합니다. 서버를 켜달라고 저한테 말해 주세요.</p>
-  </div>
+제외 폴더에 Git 외부가 없으면 자동으로 끌어오고 원격으로 연결됩니다. 브랜치로 커밋을 완료했습니다. 🔄 풀 실행:
 
-  <div class="links-container">
-    <a href="1.html">서브넷 마스크 계산</a>
-    <a href="2.html">자주 사용하는 보안 명령어 저장소</a>
-    <a href="3.html">HTTP 접속 오류 코드</a>
-    <a href="4.html">스택 연산 시뮬레이터</a>
-    <a href="5.html">정렬 알고리즘</a>
-    <a href="6.html">화이트 및 블랙박스 테스트</a>
-    <a href="7.html">SQL Test</a>
-    <a href="8.html">C 포인터 시뮬레이터</a>
-    <a href="9.html">C 언어 연산 Test</a>
-    <a href="10.html">자바 (맞는지 모름)</a>
-  </div>
+원격 구성원에서 참여한 지점의 내용을 가져오고 rebase 방식으로 수행했습니다. 정책에 따른 권한 안내:
 
-  <p><a href="https://drive.google.com/file/d/1HFmby2SHauXF2HYDNyznD5LmAHsaPBIw/view?usp=sharing"_"blank" class="download-link">깃헙 자동화 다운로드 링크</a></p>
+이 프로그램은 사용자가 소유하거나 push 권한이 있는 곳에서만 push할 수 있습니다. 다른 사람의 **공개 외부(공개 저장소)**에 따로 pull은 가능하지만 push는 불가능합니다. 원격 서버가 인증(HTTPS + 주소, SSH 등)을 요구하는 경우, 별도로 인증이 필요합니다. 💡 참고:
 
-</body>
-</html>
+제외 폴더는 원격으로 연결됩니다. 이미 연결된 폴더에는 다른 원격 책장을 사용할 수 없습니다. GUI에서는 ❓ 도움말 보기 버튼을 누르면 이 도움말을 다시 찾을 수 있습니다. """
