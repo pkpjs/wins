@@ -17,16 +17,21 @@ HELP_TEXT = """
   - 선택한 폴더에 Git 저장소가 없으면 자동으로 초기화하고
     원격 저장소와 연결합니다.
   - 지정된 브랜치로 커밋 후 push 합니다.
+  - Pull을 먼저 실행 해야 Push가 가능합니다. (이건 이미 지정한 파일은 어떻게 되는지 모름)
 
 🔄 Pull 실행:
   - 원격 저장소에서 지정된 브랜치의 내용을 fetch + rebase 방식으로 가져옵니다.
+
+🔄 파일 선택:
+  - 원하는 파일을 선택하여 올릴 수 있습니다.
+  - 2개 이상의 파일을 올릴 경우 컨트롤 또는 쉬프트를 눌러야 선택이 가능합니다.
 """
 
 class GitSyncApp(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Git 자동 동기화")
-        self.resize(400, 300)
+        self.resize(400, 350)
 
         self.layout = QVBoxLayout()
 
@@ -56,6 +61,10 @@ class GitSyncApp(QWidget):
         self.commit_input = QLineEdit("🔄 자동 푸시 및 동기화")
         self.layout.addWidget(self.commit_input)
 
+        self.file_button = QPushButton("파일 선택")
+        self.file_button.clicked.connect(self.select_files)
+        self.layout.addWidget(self.file_button)
+
         self.push_button = QPushButton("Push 실행")
         self.push_button.clicked.connect(lambda: self.auto_sync('push'))
         self.layout.addWidget(self.push_button)
@@ -74,6 +83,7 @@ class GitSyncApp(QWidget):
 
         self.setLayout(self.layout)
         self.target_dir = ""
+        self.selected_files = []
 
     def select_folder(self):
         folder = QFileDialog.getExistingDirectory(self, "디렉터리 선택")
@@ -117,6 +127,12 @@ class GitSyncApp(QWidget):
         self.branch_combo.clear()
         self.branch_combo.addItems(remote_branches)
 
+    def select_files(self):
+        files, _ = QFileDialog.getOpenFileNames(self, "파일 선택", self.target_dir, "모든 파일 (*.*)")
+        if files:
+            self.selected_files = files
+            QMessageBox.information(self, "선택된 파일", f"{len(files)} 개의 파일이 선택되었습니다.")
+
     def auto_sync(self, action):
         if not self.remote_input.text() or not self.target_dir:
             QMessageBox.warning(self, "입력 오류", "저장소 URL과 디렉터리를 모두 입력하세요.")
@@ -126,6 +142,10 @@ class GitSyncApp(QWidget):
         branch = self.branch_combo.currentText() or "main"
         commit_message = self.commit_input.text() or "🔄 자동 푸시 및 동기화"
 
+        if not self.selected_files:
+            QMessageBox.warning(self, "파일 선택 오류", "커밋할 파일을 선택하세요.")
+            return
+
         try:
             if not os.path.exists(os.path.join(self.target_dir, ".git")):
                 self.run_git("git init")
@@ -133,7 +153,11 @@ class GitSyncApp(QWidget):
 
             self.run_git(f"git checkout -B {branch}")
             self.run_git(f"git branch --set-upstream-to=origin/{branch} {branch}")
-            self.run_git("git add -A")
+
+            # 선택된 파일만 Git에 추가
+            for file in self.selected_files:
+                self.run_git(f"git add \"{file}\"")
+
             self.run_git(f'git commit -m "{commit_message}"')
 
             if action == 'push':
