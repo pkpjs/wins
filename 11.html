@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>내 자소서 & 포트폴리오</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>자기소개서</h1>
+  <section id="resume">불러오는 중...</section>
+
+  <h2>포트폴리오</h2>
+  <ul id="portfolio">불러오는 중...</ul>
+
+  <script>
+    const base = "https://raw.githubusercontent.com/YOUR_ID/YOUR_REPO/main/";
+
+    // 자소서 불러오기
+    fetch(base + "resume.md")
+      .then(res => res.text())
+      .then(md => {
+        // markdown을 간단하게 <br> 기준으로만 처리
+        document.getElementById("resume").innerHTML =
+          md.split("\n").map(line => `<p>${line}</p>`).join('');
+      });
+
+    // 포트폴리오 불러오기
+    fetch(base + "portfolio.json")
+      .then(res => res.json())
+      .then(items => {
+        const list = document.getElementById("portfolio");
+        list.innerHTML = "";
+        items.forEach(project => {
+          const li = document.createElement("li");
+          li.innerHTML = `<strong>${project.name}</strong> - ${project.desc}`;
+          list.appendChild(li);
+        });
+      });
+  </script>
+</body>
+</html>
