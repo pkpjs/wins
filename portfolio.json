@@ -1,0 +1,27 @@
+[
+  {
+    "name": "wins",
+    "desc": "Windows 자동화 및 보안 분석 관련 실험 저장소",
+    "url": "https://github.com/pkpjs/wins"
+  },
+  {
+    "name": "DBtest",
+    "desc": "데이터베이스 테스트용 실습 저장소",
+    "url": "https://github.com/pkpjs/DBtest"
+  },
+  {
+    "name": "sql-injection-test",
+    "desc": "SQL Injection 취약점 실습 및 보안 테스트 도구",
+    "url": "https://github.com/pkpjs/sql-injection-test"
+  },
+  {
+    "name": "4-1-cap",
+    "desc": "4학년 1학기 캡스톤 프로젝트 - 보안 중심 시스템",
+    "url": "https://github.com/pkpjs/4-1-cap"
+  },
+  {
+    "name": "Ai_Nids",
+    "desc": "AI 기반 네트워크 침입 탐지 시스템(NIDS)",
+    "url": "https://github.com/pkpjs/Ai_Nids"
+  }
+]
