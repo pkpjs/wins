@@ -2,39 +2,54 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>내 자소서 & 포트폴리오</title>
-  <link rel="stylesheet" href="style.css">
+  <title>포트폴리오 - pkpjs</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+    a {
+      text-decoration: none;
+      color: #0366d6;
+    }
+  </style>
 </head>
 <body>
-  <h1>자기소개서</h1>
-  <section id="resume">불러오는 중...</section>
-
-  <h2>포트폴리오</h2>
+  <h1>📁 내 프로젝트 포트폴리오</h1>
   <ul id="portfolio">불러오는 중...</ul>
 
   <script>
-    const base = "https://raw.githubusercontent.com/YOUR_ID/YOUR_REPO/main/";
+    const dataUrl = "https://raw.githubusercontent.com/pkpjs/pkpjs/main/portfolio.json"; // 저장소 위치에 맞게 수정 필요
 
-    // 자소서 불러오기
-    fetch(base + "resume.md")
-      .then(res => res.text())
-      .then(md => {
-        // markdown을 간단하게 <br> 기준으로만 처리
-        document.getElementById("resume").innerHTML =
-          md.split("\n").map(line => `<p>${line}</p>`).join('');
-      });
-
-    // 포트폴리오 불러오기
-    fetch(base + "portfolio.json")
+    fetch(dataUrl)
       .then(res => res.json())
-      .then(items => {
-        const list = document.getElementById("portfolio");
-        list.innerHTML = "";
-        items.forEach(project => {
+      .then(projects => {
+        const ul = document.getElementById("portfolio");
+        ul.innerHTML = "";
+        projects.forEach(p => {
           const li = document.createElement("li");
-          li.innerHTML = `<strong>${project.name}</strong> - ${project.desc}`;
-          list.appendChild(li);
+          li.innerHTML = `<strong><a href="${p.url}" target="_blank">${p.name}</a></strong><br>${p.desc}`;
+          ul.appendChild(li);
         });
+      })
+      .catch(err => {
+        document.getElementById("portfolio").innerHTML = "프로젝트 정보를 불러오지 못했습니다.";
+        console.error(err);
       });
   </script>
 </body>
