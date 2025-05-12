@@ -23,5 +23,15 @@
     "name": "Ai_Nids",
     "desc": "AI 기반 네트워크 침입 탐지 시스템(NIDS)",
     "url": "https://github.com/pkpjs/Ai_Nids"
+  },
+  {
+    "name": "Bigdata",
+    "desc": "대용량 데이터 처리 및 분석 실습 저장소",
+    "url": "https://github.com/pkpjs/Bigdata"
+  },
+  {
+    "name": "XXX",
+    "desc": "미정 또는 비공개 프로젝트용 저장소",
+    "url": "https://github.com/pkpjs/XXX"
   }
 ]
