@@ -31,7 +31,7 @@
   },
     {
     "name": "CVE-TEST",
-    "desc": "CVE-2025-24813 테스",
+    "desc": "CVE-2025-24813 실습",
     "url": "https://github.com/pkpjs/CVE-TEST/tree/CVE-2025-24813"
   }
 ]
