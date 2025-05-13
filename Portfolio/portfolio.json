@@ -29,4 +29,9 @@
     "desc": "대용량 데이터 처리 및 분석 실습 저장소",
     "url": "https://github.com/pkpjs/Bigdata"
   }
+    {
+    "name": "CVE-TEST",
+    "desc": "CVE-2025-24813 테스",
+    "url": "https://github.com/pkpjs/CVE-TEST/tree/CVE-2025-24813"
+  }
 ]
