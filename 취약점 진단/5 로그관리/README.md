@@ -128,3 +128,9 @@ kill -HUP [SYSLOG_PID]
 ```
 
 ---
+
+### 자동화 스크립트 및 결과값
+[자동화 스크립트](https://github.com/pkpjs/wins/blob/main/%EC%B7%A8%EC%95%BD%EC%A0%90%20%EC%A7%84%EB%8B%A8/5%20%EB%A1%9C%EA%B7%B8%EA%B4%80%EB%A6%AC/%EC%9E%90%EB%8F%99%ED%99%94%20%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8/5.sh)
+
+[자동화 스크립트 결과값].(https://github.com/pkpjs/wins/blob/main/%EC%B7%A8%EC%95%BD%EC%A0%90%20%EC%A7%84%EB%8B%A8/5%20%EB%A1%9C%EA%B7%B8%EA%B4%80%EB%A6%AC/%EC%9E%90%EB%8F%99%ED%99%94%20%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8/%EC%9E%90%EB%8F%99%ED%99%94%20%EA%B2%B0%EA%B3%BC%EA%B0%92.txt)
+
