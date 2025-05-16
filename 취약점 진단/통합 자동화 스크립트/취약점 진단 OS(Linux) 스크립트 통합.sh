@@ -15,7 +15,7 @@ echo "|         🔐  4조 보안 점검 스크립트 🔐        |"
 echo "==============================================="
 echo ""
 
-#<--------------------------- 각 함수 출력 설정 값값 ---------------------->
+#<--------------------------- 각 함수 출력 설정 값 ---------------------->
 LOG_DIR="./logs"
 mkdir -p "$LOG_DIR"
 
@@ -1743,13 +1743,15 @@ check_u59() {
 }
 
 # <--------------------------- 서비스 관리 ---------------------->
-# U-19 : finger 서비스 비활성화
+
 check_u19() {
   local LOG_FILE="$LOG_DIR/U-19.txt"
+
   {
     echo "-------------------------------------------"
     echo "[U-19] Finger 서비스 비활성화 점검"
     echo "-------------------------------------------"
+
     if [ -f /etc/xinetd.d/finger ]; then
         if grep -i "disable" /etc/xinetd.d/finger | grep -iq "no"; then
             echo "[✖] finger 서비스가 활성화되어 있습니다. (disable = no)"
@@ -1760,9 +1762,11 @@ check_u19() {
     else
         echo "[✔] /etc/xinetd.d/finger 파일이 없음 → finger 서비스 미설정"
     fi
+
     echo ""
   } > "$LOG_FILE"
 }
+
 
 # U-20 : Anonymous FTP 비활성화
 check_u20() {
@@ -1901,7 +1905,6 @@ check_u23() {
   } > "$LOG_FILE"
 }
 
-# U-24 : NFS 서비스 비활성화 
 check_u24() {
   local LOG_FILE="$LOG_DIR/U-24.txt"
   local NFS_PROCESSES=("nfsd" "statd" "mountd" "lockd")
@@ -2274,6 +2277,7 @@ check_u30() {
     echo ""
   } > "$LOG_FILE"
 }
+
 
 # U-31 : 스팸 메일 릴레이 제한 
 check_u31() {
@@ -2726,13 +2730,21 @@ check_u60() {
 
 # U-61: FTP 서비스 비활성화
 check_u61() {
-    ftp_status=$(systemctl is-active vsftpd 2>/dev/null)
-    if [ "$ftp_status" == "active" ]; then
-        log_result "U-61" "Warn" "FTP 서비스 실행 중"
+    local CODE="U-61"
+    local SERVICE="vsftpd"
+
+    if systemctl list-unit-files | grep -q "^$SERVICE"; then
+        ftp_status=$(systemctl is-active $SERVICE 2>/dev/null)
+        if [ "$ftp_status" == "active" ]; then
+            log_result "$CODE" "Warn" "FTP 서비스 실행 중"
+        else
+            log_result "$CODE" "Pass" "FTP 서비스 미실행"
+        fi
     else
-        log_result "U-61" "Pass" "FTP 서비스 미실행"
+        log_result "$CODE" "Pass" "vsftpd 서비스가 설치되지 않음"
     fi
 }
+
 
 # U-62: FTP 계정 shell 제한
 check_u62() {
@@ -2780,7 +2792,6 @@ check_u65() {
     done
 }
 
-# U-66: SNMP 서비스 확인
 check_u66() {
     if systemctl is-active snmpd &>/dev/null; then
         log_result "U-66" "Warn" "SNMP 서비스 실행 중"
@@ -3052,152 +3063,160 @@ EOF
 
 # <--------------------------- 로그 관리 ---------------------->
 # [U-43] 로그 정기적 검토 및 보고
-U43_REPORT="$LOG_DIR/U-43.txt"
-U_43_STATUS="양호"
+# [U-43] 로그 정기적 검토 및 보고
+check_u43() {
+      U43_REPORT="$LOG_DIR/U-43.txt"
+      U_43_STATUS="양호"
 
-echo "[U-43] 로그 정기적 검토 및 보고 시작" > "$U43_REPORT"
-echo "로그 분석 리포트" >> "$U43_REPORT"
-echo "----------------------------" >> "$U43_REPORT"
-echo "분석 시각: $(date)" >> "$U43_REPORT"
-echo "----------------------------" >> "$U43_REPORT"
+      echo "[U-43] 로그 정기적 검토 및 보고 시작" > "$U43_REPORT"
+      echo "로그 분석 리포트" >> "$U43_REPORT"
+      echo "----------------------------" >> "$U43_REPORT"
+      echo "분석 시각: $(date)" >> "$U43_REPORT"
+      echo "----------------------------" >> "$U43_REPORT"
 
-echo "[로그 파일] utmp, wtmp, btmp 파일 점검" >> "$U43_REPORT"
+      echo "[로그 파일] utmp, wtmp, btmp 파일 점검" >> "$U43_REPORT"
 
-if [ -f /var/log/utmp ]; then
-    echo "[utmp] 마지막 로그인 정보:" >> "$U43_REPORT"
-    last -f /var/log/utmp | head -n 10 >> "$U43_REPORT"
-else
-    echo "/var/log/utmp 파일이 존재하지 않습니다. (취약)" >> "$U43_REPORT"
-    U_43_STATUS="취약"
-fi
+      if [ -f /var/log/utmp ]; then
+          echo "[utmp] 마지막 로그인 정보:" >> "$U43_REPORT"
+          last -f /var/log/utmp | head -n 10 >> "$U43_REPORT"
+      else
+          echo "/var/log/utmp 파일이 존재하지 않습니다. (취약)" >> "$U43_REPORT"
+          U_43_STATUS="취약"
+      fi
 
-if [ -f /var/log/wtmp ]; then
-    echo "[wtmp] 로그인 기록:" >> "$U43_REPORT"
-    last -f /var/log/wtmp | head -n 10 >> "$U43_REPORT"
-else
-    echo "/var/log/wtmp 파일이 존재하지 않습니다. (취약)" >> "$U43_REPORT"
-    U_43_STATUS="취약"
-fi
+      if [ -f /var/log/wtmp ]; then
+          echo "[wtmp] 로그인 기록:" >> "$U43_REPORT"
+          last -f /var/log/wtmp | head -n 10 >> "$U43_REPORT"
+      else
+          echo "/var/log/wtmp 파일이 존재하지 않습니다. (취약)" >> "$U43_REPORT"
+          U_43_STATUS="취약"
+      fi
 
-if [ -f /var/log/btmp ]; then
-    echo "[btmp] 로그인 실패 기록:" >> "$U43_REPORT"
-    lastb | head -n 10 >> "$U43_REPORT"
-else
-    echo "/var/log/btmp 파일이 존재하지 않습니다. (취약)" >> "$U43_REPORT"
-    U_43_STATUS="취약"
-fi
+      if [ -f /var/log/btmp ]; then
+          echo "[btmp] 로그인 실패 기록:" >> "$U43_REPORT"
+          lastb | head -n 10 >> "$U43_REPORT"
+      else
+          echo "/var/log/btmp 파일이 존재하지 않습니다. (취약)" >> "$U43_REPORT"
+          U_43_STATUS="취약"
+      fi
 
-echo "[로그 파일] secure 파일 점검" >> "$U43_REPORT"
-echo "[secure] su 명령어 로그:" >> "$U43_REPORT"
+      echo "[로그 파일] secure 파일 점검" >> "$U43_REPORT"
+      echo "[secure] su 명령어 로그:" >> "$U43_REPORT"
 
-if [ -f /var/log/secure ]; then
-    grep "su:" /var/log/secure | while read line; do
-        [[ "$line" =~ "authentication failure" ]] && {
-            echo "[su 명령어] 실패한 인증 시도" >> "$U43_REPORT"
-            echo "$line" >> "$U43_REPORT"
-            U_43_STATUS="취약"
-        }
-        [[ "$line" =~ "session opened" ]] && {
-            echo "[su 명령어] 세션 열림" >> "$U43_REPORT"
-            echo "$line" >> "$U43_REPORT"
-            U_43_STATUS="취약"
-        }
-    done
+      if [ -f /var/log/secure ]; then
+          grep "su:" /var/log/secure | while read line; do
+              [[ "$line" =~ "authentication failure" ]] && {
+                  echo "[su 명령어] 실패한 인증 시도" >> "$U43_REPORT"
+                  echo "$line" >> "$U43_REPORT"
+                  U_43_STATUS="취약"
+              }
+              [[ "$line" =~ "session opened" ]] && {
+                  echo "[su 명령어] 세션 열림" >> "$U43_REPORT"
+                  echo "$line" >> "$U43_REPORT"
+                  U_43_STATUS="취약"
+              }
+          done
 
-    echo "[wheel 그룹 사용자 su 시도 점검]" >> "$U43_REPORT"
-    for user in $WHEEL_GROUP_USERS; do
-        grep "su:" /var/log/secure | grep "$user" | while read line; do
-            [[ "$line" =~ "authentication failure" ]] && {
-                echo "[$user] 인증 실패: $line" >> "$U43_REPORT"
-                U_43_STATUS="취약"
-            }
-            [[ "$line" =~ "session opened" ]] && {
-                echo "[$user] 세션 열림: $line" >> "$U43_REPORT"
-                U_43_STATUS="취약"
-            }
-        done
-    done
-else
-    echo "/var/log/secure 파일이 존재하지 않습니다. (취약)" >> "$U43_REPORT"
-    U_43_STATUS="취약"
-fi
+          echo "[wheel 그룹 사용자 su 시도 점검]" >> "$U43_REPORT"
+          for user in $WHEEL_GROUP_USERS; do
+              grep "su:" /var/log/secure | grep "$user" | while read line; do
+                  [[ "$line" =~ "authentication failure" ]] && {
+                      echo "[$user] 인증 실패: $line" >> "$U43_REPORT"
+                      U_43_STATUS="취약"
+                  }
+                  [[ "$line" =~ "session opened" ]] && {
+                      echo "[$user] 세션 열림: $line" >> "$U43_REPORT"
+                      U_43_STATUS="취약"
+                  }
+              done
+          done
+      else
+          echo "/var/log/secure 파일이 존재하지 않습니다. (취약)" >> "$U43_REPORT"
+          U_43_STATUS="취약"
+      fi
 
-echo "-------------------------------------------" >> "$U43_REPORT"
-echo "[U-43] 최종 진단 결과: $U_43_STATUS" >> "$U43_REPORT"
-
+      echo "-------------------------------------------" >> "$U43_REPORT"
+      echo "[U-43] 최종 진단 결과: $U_43_STATUS" >> "$U43_REPORT"
+}
 
 # [U-72] 시스템 로깅 설정 점검
-U72_REPORT="$LOG_DIR/U-72.txt"
-U_72_STATUS="양호"
+check_u72() {
+  U72_REPORT="$LOG_DIR/U-72.txt"
+  U_72_STATUS="양호"
 
-echo "[U-72] 시스템 로깅 설정 점검 시작" > "$U72_REPORT"
+  echo "[U-72] 시스템 로깅 설정 점검 시작" > "$U72_REPORT"
 
-if [ -f "$RSYSLOG_CONF" ]; then
-    echo "[U-72] $RSYSLOG_CONF 파일이 존재합니다." >> "$U72_REPORT"
+  if [ -f "$RSYSLOG_CONF" ]; then
+      echo "[U-72] $RSYSLOG_CONF 파일이 존재합니다." >> "$U72_REPORT"
 
-    grep -qE "^\s*.*\.info;mail.none;authpriv.none;cron.none\s+/var/log/messages" "$RSYSLOG_CONF"
-    [ $? -eq 0 ] && echo "[✔] /var/log/messages 설정됨" >> "$U72_REPORT" || {
-        echo "[✖] /var/log/messages 미설정" >> "$U72_REPORT"
-        U_72_STATUS="취약"
-    }
+      grep -qE "^\s*.*\.info;mail.none;authpriv.none;cron.none\s+/var/log/messages" "$RSYSLOG_CONF"
+      [ $? -eq 0 ] && echo "[✔] /var/log/messages 설정됨" >> "$U72_REPORT" || {
+          echo "[✖] /var/log/messages 미설정" >> "$U72_REPORT"
+          U_72_STATUS="취약"
+      }
 
-    grep -qE "^\s*authpriv\.\*\s+/var/log/secure" "$RSYSLOG_CONF"
-    [ $? -eq 0 ] && echo "[✔] /var/log/secure 설정됨" >> "$U72_REPORT" || {
-        echo "[✖] /var/log/secure 미설정" >> "$U72_REPORT"
-        U_72_STATUS="취약"
-    }
+      grep -qE "^\s*authpriv\.\*\s+/var/log/secure" "$RSYSLOG_CONF"
+      [ $? -eq 0 ] && echo "[✔] /var/log/secure 설정됨" >> "$U72_REPORT" || {
+          echo "[✖] /var/log/secure 미설정" >> "$U72_REPORT"
+          U_72_STATUS="취약"
+      }
 
-    grep -qE "^\s*mail\.\*\s+/var/log/maillog" "$RSYSLOG_CONF"
-    [ $? -eq 0 ] && echo "[✔] /var/log/maillog 설정됨" >> "$U72_REPORT" || {
-        echo "[✖] /var/log/maillog 미설정" >> "$U72_REPORT"
-        U_72_STATUS="취약"
-    }
+      grep -qE "^\s*mail\.\*\s+/var/log/maillog" "$RSYSLOG_CONF"
+      [ $? -eq 0 ] && echo "[✔] /var/log/maillog 설정됨" >> "$U72_REPORT" || {
+          echo "[✖] /var/log/maillog 미설정" >> "$U72_REPORT"
+          U_72_STATUS="취약"
+      }
 
-    grep -qE "^\s*cron\.\*\s+/var/log/cron" "$RSYSLOG_CONF"
-    [ $? -eq 0 ] && echo "[✔] /var/log/cron 설정됨" >> "$U72_REPORT" || {
-        echo "[✖] /var/log/cron 미설정" >> "$U72_REPORT"
-        U_72_STATUS="취약"
-    }
+      grep -qE "^\s*cron\.\*\s+/var/log/cron" "$RSYSLOG_CONF"
+      [ $? -eq 0 ] && echo "[✔] /var/log/cron 설정됨" >> "$U72_REPORT" || {
+          echo "[✖] /var/log/cron 미설정" >> "$U72_REPORT"
+          U_72_STATUS="취약"
+      }
 
-    grep -qE "^\s*\*\.alert\s+/dev/console" "$RSYSLOG_CONF"
-    [ $? -eq 0 ] && echo "[✔] *.alert /dev/console 설정됨" >> "$U72_REPORT" || {
-        echo "[✖] *.alert /dev/console 미설정" >> "$U72_REPORT"
-        U_72_STATUS="취약"
-    }
+      grep -qE "^\s*\*\.alert\s+/dev/console" "$RSYSLOG_CONF"
+      [ $? -eq 0 ] && echo "[✔] *.alert /dev/console 설정됨" >> "$U72_REPORT" || {
+          echo "[✖] *.alert /dev/console 미설정" >> "$U72_REPORT"
+          U_72_STATUS="취약"
+      }
 
-    grep -qE "^\s*\*\.emerg\s+\*" "$RSYSLOG_CONF"
-    [ $? -eq 0 ] && echo "[✔] *.emerg * 설정됨" >> "$U72_REPORT" || {
-        echo "[✖] *.emerg * 미설정" >> "$U72_REPORT"
-        U_72_STATUS="취약"
-    }
+      grep -qE "^\s*\*\.emerg\s+\*" "$RSYSLOG_CONF"
+      [ $? -eq 0 ] && echo "[✔] *.emerg * 설정됨" >> "$U72_REPORT" || {
+          echo "[✖] *.emerg * 미설정" >> "$U72_REPORT"
+          U_72_STATUS="취약"
+      }
 
-else
-    echo "[✖] $RSYSLOG_CONF 파일 없음" >> "$U72_REPORT"
-    U_72_STATUS="취약"
-fi
+  else
+      echo "[✖] $RSYSLOG_CONF 파일 없음" >> "$U72_REPORT"
+      U_72_STATUS="취약"
+  fi
 
-echo "-------------------------------------------" >> "$U72_REPORT"
-echo "[U-72] 최종 진단 결과: $U_72_STATUS" >> "$U72_REPORT"
+  echo "-------------------------------------------" >> "$U72_REPORT"
+  echo "[U-72] 최종 진단 결과: $U_72_STATUS" >> "$U72_REPORT"
+}
 
 # 모든 점검 실행
 checks=(
-    check_u06 check_u05 check_u07
-    check_u08 check_u09 check_u10
-    check_u11 check_u12 check_u13
-    check_u14 check_u15 check_u16
-    check_u17 check_u18 check_u42
-    check_u55 check_u56 check_u57
-    check_u58 check_u59 check_u71
-    check_u41 check_u60 check_u61 
-    check_u62 check_u63 check_u64 
-    check_u65 check_u66 check_u67 
-    check_u68 check_u69 check_u70 
-    check_u01 check_u02 check_u03
-    check_u04 check_u44 check_u45
-    check_u46 check_u47 check_u48
-    check_u49 check_u50 check_u51
-    check_u52 check_u53 check_u54)
 
+      check_u20
+      check_u18 check_u19 check_u21
+      check_u55 check_u56 check_u57 check_u58 check_u59
+         
+      check_u22 check_u23 check_u24
+      check_u25 check_u26 check_u27 check_u28 check_u29 check_u30
+      check_u31 check_u32 check_u33 check_u34 check_u35 check_u36
+      check_u37 check_u38 check_u39 check_u40 check_u41 
+      
+      check_u60 check_u61 check_u62 check_u63 check_u64 check_u65 check_u66
+      check_u67 check_u68 check_u69 check_u70 check_u71 check_u42
+      check_u43 check_u72
+      check_u01 check_u02 check_u03 check_u04 check_u44 check_u45
+      check_u46 check_u47 check_u48 check_u49 check_u50 check_u51
+      check_u52 check_u53 check_u54 check_u05 check_u06 check_u07
+      check_u08 check_u09 check_u10 check_u11 check_u12 check_u13
+      check_u14 check_u15 check_u16 check_u17
+      
+      
+      )
 for check in "${checks[@]}"; do
     $check
 done
