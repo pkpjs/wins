@@ -12,7 +12,7 @@
   {
     "name": "sql-injection-test",
     "desc": "SQL Injection 취약점 실습 및 보안 테스트 도구",
-    "url": "https://github.com/pkpjs/sql-injection-test"
+    "url": "https://github.com/pkpjs/Capstone"
   },
   {
     "name": "4-1-cap",
