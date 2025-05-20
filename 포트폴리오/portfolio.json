@@ -19,16 +19,6 @@
     "desc": "4학년 1학기 캡스톤 프로젝트 - 보안 중심 시스템",
     "url": "https://github.com/pkpjs/4-1-cap"
   },
-  {
-    "name": "Ai_Nids",
-    "desc": "AI 기반 네트워크 침입 탐지 시스템(NIDS)",
-    "url": "https://github.com/pkpjs/Ai_Nids"
-  },
-  {
-    "name": "Bigdata",
-    "desc": "대용량 데이터 처리 및 분석 실습 저장소",
-    "url": "https://github.com/pkpjs/Bigdata"
-  },
     {
     "name": "CVE-TEST",
     "desc": "CVE 실습",
