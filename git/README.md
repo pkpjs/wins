@@ -4,11 +4,9 @@
 1. Git bash와 Git hub 사이트 내에 레포리지가 생성 되어있어야 합니다.
 2. Git bash와 Git hub의 아이디와 이메일이 연동 되어있어야 합니다.
 
-'''
-bash
+```bash
 git config --global user.name "계정"
 git config --global user.email "이메일"
-'''
 
 📁 폴더 선택: 캠프장을 기재합니다. 🔗 원격 서버 URL: GitHub 등 원격 서버의 주소를 입력합니다. 브랜치 (기본: 메인): 작업할 브랜치를 직접 입력해야 합니다. 커밋셈: 기본적으로 수정하거나 그대로 있을 수 있습니다. 🔁 푸시 실행:
 
