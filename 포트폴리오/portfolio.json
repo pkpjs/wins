@@ -14,11 +14,6 @@
     "desc": "Capstone 프로젝트 저장소 및 개인 프로젝트 저장소",
     "url": "https://github.com/pkpjs/Capstone"
   },
-  {
-    "name": "4-1-cap",
-    "desc": "4학년 1학기 캡스톤 프로젝트 - 보안 중심 시스템",
-    "url": "https://github.com/pkpjs/4-1-cap"
-  },
     {
     "name": "CVE-TEST",
     "desc": "CVE 실습",
