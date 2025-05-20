@@ -31,17 +31,29 @@
   </style>
 </head>
 <body>
-  <h1>📁 내 프로젝트</h1>
-  <ul id="portfolio">불러오는 중...</ul>
 
   <h2>📝 자기소개서</h2>
   <div id="resume">불러오는 중...</div>
+
+  <h1>📁 내 프로젝트</h1>
+  <ul id="portfolio">불러오는 중...</ul>
 
   <!-- marked.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <script>
     const baseURL = "https://raw.githubusercontent.com/pkpjs/wins/main/포트폴리오/";
+
+    // README.md 불러오기 (자기소개서)
+    fetch(baseURL + "README.md")
+      .then(res => res.text())
+      .then(md => {
+        document.getElementById("resume").innerHTML = marked.parse(md);
+      })
+      .catch(err => {
+        document.getElementById("resume").innerText = "자기소개서를 불러오지 못했습니다.";
+        console.error(err);
+      });
 
     // 포트폴리오 JSON 불러오기
     fetch(baseURL + "portfolio.json")
@@ -57,18 +69,6 @@
       })
       .catch(err => {
         document.getElementById("portfolio").innerText = "포트폴리오를 불러오지 못했습니다.";
-        console.error(err);
-      });
-
-    // README.md 불러오기 (자기소개서)
-    fetch(baseURL + "README.md")
-      .then(res => res.text())
-      .then(md => {
-        // marked.js로 마크다운을 HTML로 변환
-        document.getElementById("resume").innerHTML = marked.parse(md);
-      })
-      .catch(err => {
-        document.getElementById("resume").innerText = "자기소개서를 불러오지 못했습니다.";
         console.error(err);
       });
   </script>
