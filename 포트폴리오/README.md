@@ -88,7 +88,7 @@
 
 ## 🗂️ **포트폴리오 및 증빙자료**
 
-- 📁 포트폴리오.pptx  
+- [📁 포트폴리오](https://github.com/pkpjs/wins/blob/main/%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4/%EC%A6%9D%EB%AA%85%EC%84%9C/%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4_7.pptx) 
 - [🪪 누리캅스 회원 인증장](https://github.com/pkpjs/wins/blob/main/%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4/%EC%A6%9D%EB%AA%85%EC%84%9C/%EB%88%84%EB%A6%AC%EC%BA%85%EC%8A%A4%20%ED%9A%8C%EC%9B%90%20%EC%9E%85%EB%AA%85%EC%9E%A5.jpg)
 - [🏅 2023 울산 모의해킹 대회](https://github.com/pkpjs/wins/blob/main/%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4/%EC%A6%9D%EB%AA%85%EC%84%9C/2023%20%EC%9A%B8%EC%82%B0%20%EB%AA%A8%EC%9D%98%ED%95%B4%ED%82%B9%20%EB%8C%80%ED%9A%8C.png)
 - [🏅 제2회 경남권 사이버보안 경진대회](https://github.com/pkpjs/wins/blob/main/%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4/%EC%A6%9D%EB%AA%85%EC%84%9C/%EC%A0%9C2%ED%9A%8C%20%EA%B2%BD%EB%82%A8%EA%B6%8C%20%EC%82%AC%EC%9D%B4%EB%B2%84%EB%B3%B4%EC%95%88%20%EA%B2%BD%EC%A7%84%EB%8C%80%ED%9A%8C.png)
