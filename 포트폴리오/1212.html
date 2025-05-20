@@ -31,31 +31,14 @@
   </style>
 </head>
 <body>
-  <h1>📁 내 프로젝트</h1>
-  <ul id="portfolio">불러오는 중...</ul>
-
   <h2>📝 자기소개서</h2>
   <div id="resume">불러오는 중...</div>
 
+  <h1>📁 내 프로젝트</h1>
+  <ul id="portfolio">불러오는 중...</ul>
+
   <script>
     const baseURL = "https://raw.githubusercontent.com/pkpjs/wins/main/포트폴리오/";
-
-    // 포트폴리오 JSON 불러오기
-    fetch(baseURL + "portfolio.json")
-      .then(res => res.json())
-      .then(projects => {
-        const ul = document.getElementById("portfolio");
-        ul.innerHTML = "";
-        projects.forEach(p => {
-          const li = document.createElement("li");
-          li.innerHTML = `<strong><a href="${p.url}" target="_blank">${p.name}</a></strong><br>${p.desc}`;
-          ul.appendChild(li);
-        });
-      })
-      .catch(err => {
-        document.getElementById("portfolio").innerText = "포트폴리오를 불러오지 못했습니다.";
-        console.error(err);
-      });
 
     // README.md 불러오기 (자소서)
     fetch(baseURL + "README.md")
@@ -71,10 +54,4 @@
           .replace(/\n/g, '<br>');
         document.getElementById("resume").innerHTML = html;
       })
-      .catch(err => {
-        document.getElementById("resume").innerText = "자기소개서를 불러오지 못했습니다.";
-        console.error(err);
-      });
-  </script>
-</body>
-</html>
+      .catch(err
