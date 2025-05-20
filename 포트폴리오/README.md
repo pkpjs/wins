@@ -90,7 +90,8 @@
 
 - 📁 포트폴리오.pptx  
 - 🪪 누리캅스 회원 인증장.jpg  
-- [🏅 2023 울산 모의해킹 대회]([https://github.com/catember/vulnerability-check](https://github.com/pkpjs/wins/blob/main/%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4/%EC%A6%9D%EB%AA%85%EC%84%9C/2023%20%EC%9A%B8%EC%82%B0%20%EB%AA%A8%EC%9D%98%ED%95%B4%ED%82%B9%20%EB%8C%80%ED%9A%8C.png))
+- [🏅 2023 울산 모의해킹 대회](https://github.com/pkpjs/wins/blob/main/%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4/%EC%A6%9D%EB%AA%85%EC%84%9C/2023%20%EC%9A%B8%EC%82%B0%20%EB%AA%A8%EC%9D%98%ED%95%B4%ED%82%B9%20%EB%8C%80%ED%9A%8C.png)
+
 - 📑 클라우드 보안기술 전략.pdf  
 - 📑 ISMS-P 관리체계.pdf  
 - 📑 웹 취약점 진단 및 모의해킹.pdf  
