@@ -1,7 +1,7 @@
 [
   {
     "name": "wins",
-    "desc": "Windows 자동화 및 보안 분석 관련 실험 저장소",
+    "desc": "Wins 사이버 보안 교육 저장소",
     "url": "https://github.com/pkpjs/wins"
   },
   {
@@ -9,9 +9,9 @@
     "desc": "데이터베이스 테스트용 실습 저장소",
     "url": "https://github.com/pkpjs/DBtest"
   },
-  {
-    "name": "sql-injection-test",
-    "desc": "SQL Injection 취약점 실습 및 보안 테스트 도구",
+     {
+    "name": "Capstone",
+    "desc": "Capstone 프로젝트 저장소 및 개인 프로젝트 저장소",
     "url": "https://github.com/pkpjs/Capstone"
   },
   {
