@@ -2,7 +2,7 @@
 
 #### 준비물
 1. Git bash와 Git hub 사이트 내에 레포리지가 생성 되어있어야 합니다.
-2. Git bash와 Git hub의 아이디와 이메일이 연동 되어있어야 합니다.
+2. Git bash와 Git hub의 ID와 E-mail 연동 되어있어야 합니다.
 
 ```bash
 git config --global user.name "계정"
