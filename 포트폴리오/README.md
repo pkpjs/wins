@@ -68,6 +68,6 @@
 - [📑 물리보안 및 시스템 접근 통제](https://github.com/pkpjs/wins/blob/main/%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4/%EC%A6%9D%EB%AA%85%EC%84%9C/%EB%AC%BC%EB%A6%AC%EB%B3%B4%EC%95%88%EA%B3%BC%20%EC%8B%9C%EC%8A%A4%ED%85%9C%20%EC%A0%91%EA%B7%BC%20%ED%86%B5%EC%A0%9C.pdf)  
 - [📑 침해사고 대응 훈련 – 스피어피싱 대응](https://github.com/pkpjs/wins/blob/main/%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4/%EC%A6%9D%EB%AA%85%EC%84%9C/%5B%EC%A4%91%EA%B8%89%5D%20%EC%B9%A8%ED%95%B4%EC%82%AC%EA%B3%A0%20%EB%8C%80%EC%9D%91%ED%9B%88%EB%A0%A8%20-%20%EC%8A%A4%ED%94%BC%EC%96%B4%ED%94%BC%EC%8B%B1%20%EB%8C%80%EC%9D%91%20%EA%B8%B0%EB%B3%B8.pdf)
 ## 🛠️ **지원 분야**
-- 🔐 **보안 엔지니어**: 컨설팅, 정보보안, 네트워크 엔지니어 
-- 📦 **IT 기술영업**: 보안 솔루션 기술지원 및 영업  
-- 🌐 **산업 분야**: 네트워크·통신서비스, 정보보안  
+- 컨설팅
+- 네트워크 엔지니어
+- 취약점 진단
