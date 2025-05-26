@@ -5,6 +5,7 @@
   <title>🚩 CTF 실습 포털</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
   <style>
     :root {
       --bg-color: #0e1117;
@@ -34,14 +35,54 @@
       transition: background 0.3s, color 0.3s;
     }
 
+    .banner {
+      background: #ff4757;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 0.95em;
+      position: relative;
+      overflow: hidden;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .banner .slide-text {
+      animation: slideIn 0.5s ease;
+      white-space: nowrap;
+    }
+
+    .banner .close-btn {
+      position: absolute;
+      top: 8px;
+      right: 14px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+
+    @keyframes slideIn {
+      0% {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      100% {
+        transform: translateX(0%);
+        opacity: 1;
+      }
+    }
+
     header {
       text-align: center;
-      padding: 60px 20px 20px;
+      padding: 40px 20px 10px;
     }
 
     header h1 {
-      font-size: 2.6em;
-      margin-bottom: 8px;
+      font-size: 2.4em;
+      margin-bottom: 10px;
     }
 
     .toggle-btn {
@@ -55,11 +96,19 @@
       cursor: pointer;
     }
 
+    #console-box {
+      font-size: 0.9em;
+      color: #64ffda;
+      padding: 10px 0;
+      white-space: pre-line;
+      height: 60px;
+    }
+
     .container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 24px;
-      padding: 40px;
+      padding: 30px 40px 60px;
       max-width: 1200px;
       margin: auto;
     }
@@ -132,13 +181,19 @@
 </head>
 <body>
 
+  <div class="banner" id="banner">
+    <span id="banner-message" class="slide-text">🔔 공지를 불러오는 중...</span>
+    <span class="close-btn" onclick="document.getElementById('banner').style.display='none'">✕</span>
+  </div>
+
   <header>
-    <h1>🛡️ CTF 실습 접속 포털</h1>
+    <h1>🛡️ CTF 실습 포털</h1>
+    <div id="console-box"><span id="typed-console"></span></div>
     <button class="toggle-btn" onclick="toggleTheme()">🌗 다크모드 토글</button>
   </header>
 
   <main class="container" id="server-list">
-    <!-- 서버 카드들이 여기에 JS로 삽입됨 -->
+    <!-- 서버 카드들이 JS로 삽입됩니다 -->
   </main>
 
   <footer>
@@ -146,97 +201,10 @@
   </footer>
 
   <script>
+    // 서버 목록
     const servers = [
-      {
-        url: "http://192.168.0.1",
-        label: "192.168.0.1",
-        tag: "Admin",
-        emoji: "🔧",
-        desc: "라우터 관리자 페이지"
-      },
-      {
-        url: "http://100.10.10.75:8083/",
-        label: "100.10.10.75:8083",
-        tag: "RCE",
-        emoji: "💥",
-        desc: "Tomcat CVE-2025-24813 실습"
-      },
-      {
-        url: "http://100.10.10.82:8080",
-        label: "100.10.10.82:8080",
-        tag: "WebShell",
-        emoji: "🕸️",
-        desc: "JSP WebShell 업로드 실습"
-      },
-      {
-        url: "http://192.168.1.100:5000",
-        label: "192.168.1.100:5000",
-        tag: "Login Bypass",
-        emoji: "🔐",
-        desc: "Flask 로그인 우회 실습"
-      },
-      {
-        url: "http://10.10.10.10:3000",
-        label: "10.10.10.10:3000",
-        tag: "Node.js",
-        emoji: "📦",
-        desc: "Node.js 취약점 테스트"
-      },
-      {
-        url: "http://192.168.0.99:9999",
-        label: "192.168.0.99:9999",
-        tag: "Reverse Shell",
-        emoji: "🔁",
-        desc: "리버스쉘 테스트 환경"
-      },
-      {
-        url: "http://8.8.8.8",
-        label: "8.8.8.8",
-        tag: "Test",
-        emoji: "📶",
-        desc: "DNS 응답 확인"
-      }
-    ];
-
-    const listEl = document.getElementById("server-list");
-
-    servers.forEach(srv => {
-      const card = document.createElement("div");
-      card.className = "card";
-
-      const statusEl = document.createElement("div");
-      statusEl.className = "status";
-      statusEl.textContent = "⏳";
-      card.appendChild(statusEl);
-
-      const link = document.createElement("a");
-      link.href = srv.url;
-      link.target = "_blank";
-      link.textContent = srv.label;
-
-      const p = document.createElement("p");
-      p.innerHTML = `<span class="tag">[${srv.tag}]</span> ${srv.emoji} ${srv.desc}`;
-
-      card.appendChild(link);
-      card.appendChild(p);
-      listEl.appendChild(card);
-
-      // 간단한 fetch로 접속 확인
-      fetch(srv.url, { method: 'HEAD', mode: 'no-cors' })
-        .then(() => {
-          statusEl.textContent = "✅";
-          statusEl.classList.add("ok");
-        })
-        .catch(() => {
-          statusEl.textContent = "❌";
-          statusEl.classList.add("fail");
-        });
-    });
-
-    function toggleTheme() {
-      document.body.classList.toggle('light');
-    }
-  </script>
-
-</body>
-</html>
+      { url: "http://192.168.0.1", label: "192.168.0.1", tag: "Admin", emoji: "🔧", desc: "라우터 관리자 페이지" },
+      { url: "http://100.10.10.75:8083/", label: "100.10.10.75:8083", tag: "RCE", emoji: "💥", desc: "Tomcat CVE-2025-24813 실습" },
+      { url: "http://100.10.10.82:8080", label: "100.10.10.82:8080", tag: "WebShell", emoji: "🕸️", desc: "JSP 업로드 실습" },
+      { url: "http://192.168.1.100:5000", label: "192.168.1.100:5000", tag: "Login Bypass", emoji: "🔐", desc: "Flask 취약 웹앱" },
+      { url: "http://10.10.10.10:3000", label: "10.10.10.10:3000", tag: "Node.js", emoji: "📦", desc: "Node.js 취약점 테스트" },
