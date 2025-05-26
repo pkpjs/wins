@@ -208,3 +208,92 @@
       { url: "http://100.10.10.82:8080", label: "100.10.10.82:8080", tag: "WebShell", emoji: "🕸️", desc: "JSP 업로드 실습" },
       { url: "http://192.168.1.100:5000", label: "192.168.1.100:5000", tag: "Login Bypass", emoji: "🔐", desc: "Flask 취약 웹앱" },
       { url: "http://10.10.10.10:3000", label: "10.10.10.10:3000", tag: "Node.js", emoji: "📦", desc: "Node.js 취약점 테스트" },
+      { url: "http://192.168.0.99:9999", label: "192.168.0.99:9999", tag: "Reverse Shell", emoji: "🔁", desc: "리버스쉘 실습 환경" },
+      { url: "http://8.8.8.8", label: "8.8.8.8", tag: "Test", emoji: "📶", desc: "DNS 응답 확인용" }
+    ];
+
+    // 공지 슬라이드용
+    let currentNotice = 0;
+    let notices = ["📡 공지를 불러오는 중..."];
+    const bannerTextEl = document.getElementById("banner-message");
+
+    function rotateNotice() {
+      currentNotice = (currentNotice + 1) % notices.length;
+      bannerTextEl.classList.remove("slide-text");
+      void bannerTextEl.offsetWidth; // 강제 재렌더링
+      bannerTextEl.textContent = notices[currentNotice];
+      bannerTextEl.classList.add("slide-text");
+    }
+
+    // 외부 JSON 공지 불러오기
+    fetch('notices.json')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          notices = data;
+          bannerTextEl.textContent = notices[0];
+          setInterval(rotateNotice, 6000);
+        } else {
+          bannerTextEl.textContent = "📢 등록된 공지가 없습니다.";
+        }
+      })
+      .catch(() => {
+        bannerTextEl.textContent = "⚠️ 공지 불러오기 실패";
+      });
+
+    // 서버 카드 렌더링
+    const listEl = document.getElementById("server-list");
+    servers.forEach(srv => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const statusEl = document.createElement("div");
+      statusEl.className = "status";
+      statusEl.textContent = "⏳";
+      card.appendChild(statusEl);
+
+      const link = document.createElement("a");
+      link.href = srv.url;
+      link.target = "_blank";
+      link.textContent = srv.label;
+
+      const p = document.createElement("p");
+      p.innerHTML = `<span class="tag">[${srv.tag}]</span> ${srv.emoji} ${srv.desc}`;
+
+      card.appendChild(link);
+      card.appendChild(p);
+      listEl.appendChild(card);
+
+      fetch(srv.url, { method: 'HEAD', mode: 'no-cors' })
+        .then(() => {
+          statusEl.textContent = "✅";
+          statusEl.classList.add("ok");
+        })
+        .catch(() => {
+          statusEl.textContent = "❌";
+          statusEl.classList.add("fail");
+        });
+    });
+
+    // 다크모드 토글
+    function toggleTheme() {
+      document.body.classList.toggle('light');
+    }
+
+    // 타이핑 콘솔 효과
+    new Typed('#typed-console', {
+      strings: [
+        'root@ctf:~$ Connecting to nodes...',
+        'root@ctf:~$ Downloading challenge metadata...',
+        'root@ctf:~$ Ready. Good luck, hacker!'
+      ],
+      typeSpeed: 50,
+      backSpeed: 30,
+      startDelay: 500,
+      loop: true,
+      showCursor: true,
+      cursorChar: '_'
+    });
+  </script>
+</body>
+</html>
