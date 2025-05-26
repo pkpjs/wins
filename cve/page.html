@@ -2,21 +2,64 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>IP 주소 목록</title>
+  <title>🔥 CTF 실습 접속 페이지</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 40px; }
-    ul { line-height: 1.8; }
-    a { color: blue; text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      color: #222;
+    }
+    .box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin: 10px 0;
+    }
+    a {
+      font-weight: bold;
+      color: #0078d7;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .desc {
+      font-size: 0.9em;
+      color: #555;
+    }
   </style>
 </head>
 <body>
-  <h2>🌐 IP 주소 목록</h2>
-  <ul>
-    <li><a href="http://192.168.0.1" target="_blank">192.168.0.1</a></li>
-    <li><a href="http://100.10.10.75:8083/" target="_blank">10.0.0.5</a></li>
-    <li><a href="http://8.8.8.8" target="_blank">8.8.8.8</a></li>
-    <li><a href="http://100.10.10.82:8080" target="_blank">100.10.10.82:8080</a></li>
-  </ul>
+  <div class="box">
+    <h1>🔐 CTF 실습 서버 목록</h1>
+    <ul>
+      <li>
+        <a href="http://192.168.0.1" target="_blank">192.168.0.1</a>
+        <div class="desc">기본 게이트웨이 관리자 페이지</div>
+      </li>
+      <li>
+        <a href="http://100.10.10.75:8083/" target="_blank">100.10.10.75:8083</a>
+        <div class="desc">Tomcat 취약점 실습 (CVE-2025-24813)</div>
+      </li>
+      <li>
+        <a href="http://8.8.8.8" target="_blank">8.8.8.8</a>
+        <div class="desc">Google DNS 테스트</div>
+      </li>
+      <li>
+        <a href="http://100.10.10.82:8080" target="_blank">100.10.10.82:8080</a>
+        <div class="desc">CTF 환경 WebShell 테스트 서버</div>
+      </li>
+    </ul>
+  </div>
 </body>
 </html>
