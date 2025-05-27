@@ -1,1 +1,1 @@
-https://pkpjs.github.io/wins/cve/page.html
+https://pkpjs.github.io/wins/cve/index.html
