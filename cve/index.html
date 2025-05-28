@@ -104,6 +104,11 @@
       height: 60px;
     }
 
+    /* 💡 라이트 모드 전용 텍스트 색상 */
+    body.light #console-box {
+      color: #0078d7;
+    }
+
     .container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -201,7 +206,6 @@
   </footer>
 
   <script>
-    // 서버 목록
     const servers = [
       { url: "http://192.168.0.1", label: "192.168.0.1", tag: "Admin", emoji: "🔧", desc: "라우터 관리자 페이지" },
       { url: "http://100.10.10.75:8083/", label: "100.10.10.75:8083", tag: "RCE", emoji: "💥", desc: "Tomcat CVE-2025-24813 실습" },
@@ -212,7 +216,6 @@
       { url: "https://www.naver.com/", label: "https://www.naver.com/", tag: "Test", emoji: "📶", desc: "DNS 응답 확인용" }
     ];
 
-    // 공지 슬라이드용
     let currentNotice = 0;
     let notices = ["📡 공지를 불러오는 중..."];
     const bannerTextEl = document.getElementById("banner-message");
@@ -220,12 +223,11 @@
     function rotateNotice() {
       currentNotice = (currentNotice + 1) % notices.length;
       bannerTextEl.classList.remove("slide-text");
-      void bannerTextEl.offsetWidth; // 강제 재렌더링
+      void bannerTextEl.offsetWidth;
       bannerTextEl.textContent = notices[currentNotice];
       bannerTextEl.classList.add("slide-text");
     }
 
-    // 외부 JSON 공지 불러오기
     fetch('notices.json')
       .then(res => res.json())
       .then(data => {
@@ -241,7 +243,6 @@
         bannerTextEl.textContent = "⚠️ 공지 불러오기 실패";
       });
 
-    // 서버 카드 렌더링
     const listEl = document.getElementById("server-list");
     servers.forEach(srv => {
       const card = document.createElement("div");
@@ -275,12 +276,10 @@
         });
     });
 
-    // 다크모드 토글
     function toggleTheme() {
       document.body.classList.toggle('light');
     }
 
-    // 타이핑 콘솔 효과
     new Typed('#typed-console', {
       strings: [
         'root@ctf:~$ Connecting to nodes...',
