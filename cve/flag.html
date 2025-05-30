@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>CTF</title>
+  <script src="https://cdn.jsdelivr.net/npm/js-sha256@0.9.0/build/sha256.min.js"></script>
+</head>
+<body>
+  <input type="text" id="flag" placeholder="flag 입력">
+  <button onclick="check()">확인</button>
+  <p id="result"></p>
+
+  <script>
+    // 정답: flag{correct_answer}
+    const correctHash = "b0e4f298e04ffb65d826ae7155975f7967332cfe7f8d6cf0869c85cfb7f96eeb";
+
+    function check() {
+      const input = document.getElementById("flag").value.trim();
+      const inputHash = sha256(input);
+      const result = document.getElementById("result");
+      result.textContent = (inputHash === correctHash) ? "✅ 정답!" : "❌ 오답!";
+    }
+  </script>
+</body>
+</html>
