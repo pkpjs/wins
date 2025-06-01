@@ -179,10 +179,10 @@
 
   <script>
     const servers = [
-      { url: "http://100.10.10.75:8083", label: "문제 1" },
-      { url: "http://100.10.10.75:8087", label: "문제 2" },
-      { url: "http://10.100.6.53:8080", label: "문제 3" },
-      { url: "http://59.21.148.110:8999", label: "문제 4" },
+      { url: "http://100.10.10.75:8083", label: "문제 1 🚩" },
+      { url: "http://100.10.10.75:8087", label: "문제 2 🚩" },
+      { url: "http://10.100.6.53:8080", label: "문제 3 🚩" },
+      { url: "http://59.21.148.110:8999", label: "문제 4 🚩" },
       { url: "http://59.21.148.110:8083/file.jsp", label: "문제 5" },
       { url: "http://59.21.148.110:8083/loadpayload.jsp", label: "문제 6" },
       { url: "https:/59.21.148.110:8080", label: "문제 7" }
@@ -224,7 +224,6 @@
       link.href = srv.url;
       link.target = "_blank";
       link.textContent = srv.label;
-      link.textContent = (idx < 4 ? "🚩 " : "") + srv.label;
 
       card.appendChild(link);
       listEl.appendChild(card);
